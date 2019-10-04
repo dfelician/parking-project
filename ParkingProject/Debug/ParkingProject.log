@@ -1,0 +1,3 @@
+﻿  ParkingProject.cpp
+C:\Users\felidp\source\repos\ParkingProject\ParkingProject\ParkingProject.cpp(78): warning C4715: 'signIn': not all control paths return a value
+  ParkingProject.vcxproj -> C:\Users\felidp\source\repos\ParkingProject\Debug\ParkingProject.exe
