@@ -1,62 +1,42 @@
 #include <iostream>
+#include <string>
+#include <vector>
+#include "parkingSpace.h"
 using namespace std;
 
-class parkingSpace{
-    bool reserved;
-    string student;
-    parkingSpace *nextSpot;
-    int spotNumber;
+/**************************
+ ***    parkingLotMenu  ***
+ **************************/
+char parkingLotMenu(){
+    char slct;
     
-  public:
-    parkingSpace(){
-        reserved = false;
-        nextSpot = NULL;
-#include <iostream>
-using namespace std;
-
-class parkingSpace{
-    bool reserved;
-    string student;
-    parkingSpace *nextSpot;
-    int spotNumber;
+    cout << "(A) Student Lot 3\n";
+    cout << "(B) Student Lot 5\n";
+    cout << "(C) Student Lot 18\n";
+    cout << "\nSelect a lot.\n";
+    cin >> slct;
     
-  public:
-    parkingSpace(){
-        reserved = false;
-        nextSpot = NULL;
-        student = "";
-    }
-    void setSpaceNum(int spotNumber){
-      this->spotNumber = spotNumber;
-    }
-    int getSpaceNum(){
-      return this->spotNumber;
-    }
-    void reserveSpot(string student, int spotNumber){
-        
-    }
-};
-int main() {
-  parkingSpace *parkingLot[10];
+    return slct;
+}
 
-  for(int i = 0; i < 10; i++){
-    parkingLot[i] = new parkingSpace;
-    parkingLot[i]->setSpaceNum(i);
-  }
-  for(int i = 0; i < 10; i++){
-    cout << parkingLot[i]->getSpaceNum() << endl;
-  }
-}        student = "";
-    }
-    void reserveSpot(string student, int spotNumber){
-        
-    }
-};
-int main() {
-  parkingSpace *row[10];
+int main(){
+    /*char select;
+    
+    do{
+        select = parkingLotMenu();
+    } while (select != 'A' && select != 'B' && select != 'C');
+    
+    if(select == 'A'){
 
-  for(int i = 0; i < 10; i++){
-    row[i] = &i;
-    cout << *(row[i]) << endl; 
-  }
+    }else if(select == 'B'){
+        
+    }else if(select == 'C'){
+        
+    }else{
+        
+    }*/
+
+    LotRow studentLot3[] = {2};
+    LotRow studentLot5[] = {3, 2};
+    return 0;
 }
