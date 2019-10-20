@@ -88,6 +88,8 @@ public:
 
 		std::string SQLQuery = "SELECT * FROM UserLogin WHERE UserName = '" + userInput + "'";
 
+
+
 	}
 	~ConnectToDB() {
 		SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
