@@ -4,7 +4,8 @@
 #include <sqlext.h>
 #include <sqltypes.h>
 #include <sql.h>
-
+#include <string>
+ 
 using namespace std;
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
@@ -18,12 +19,23 @@ void showSQLError(unsigned int handleType, const SQLHANDLE& handle)
 
 int main()
 {
-	SQLHANDLE SQLEnvHandle = NULL;
+ 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
-	char SQLQuery[] = "SELECT * FROM Student";
 
+	string inputUserName;
+	string inputPassword;
+
+	cout << "Enter username: \n";
+	cin >> inputUserName;
+	cout << "Enter password: \n";
+	cin >> inputPassword;
+
+	bool success = false;
+	string SQLQuery = "SELECT * FROM UserLogin WHERE UserName = '" + inputUserName + "'";
+
+	
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
 			// Allocates the environment
@@ -71,26 +83,31 @@ int main()
 			// Allocates the statement
 			break;
 
-		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery, SQL_NTS)) {
+		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS)) {
 			// Executes a preparable statement
 			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
 			break;
 		}
 		else {
-			char id[256];
-			char fName[256];
-			char lName[256];
-			int enrolled[256];
-			int activePermit[256];
+			char userName[256];
+			char password[256];
+			char ramID[256];
+			//int enrolled[256];
+			//int activePermit[256];
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 				// Fetches the next rowset of data from the result
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &id, sizeof(id), NULL);
-				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &fName, sizeof(fName), NULL);
-				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &lName, sizeof(lName), NULL);
-				SQLGetData(SQLStatementHandle, 4, SQL_C_NUMERIC, &enrolled, sizeof(enrolled), NULL);
-			    SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &activePermit, sizeof(activePermit), NULL);
-				
-				cout << "ID: " << id << " Name: " << fName << " " << lName << " Enrolled: " << enrolled << " Active Permit: " << activePermit << endl;
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &userName, sizeof(userName), NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &password, sizeof(password), NULL);
+				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &ramID, sizeof(ramID), NULL);
+				//	SQLGetData(SQLStatementHandle, 4, SQL_C_NUMERIC, &enrolled, sizeof(enrolled), NULL);
+				//  SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &activePermit, sizeof(activePermit), NULL);
+				//cout << "ID: " << id << " Name: " << fName << " " << lName << " Enrolled: " << enrolled << " Active Permit: " << activePermit << endl;
+				//cout << "Username : " << userName << "Password: " << password << "RAM ID: " << ramID << endl;
+
+				if (inputUserName == userName && inputPassword == password) {
+					cout << "Success" << endl;
+					success = true;
+				}
 			}
 		}
 	} while (FALSE);
@@ -100,6 +117,10 @@ int main()
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 	// Frees the resources and disconnects
+
+	if (success == false) {
+		cout << "Incorrect username or password" << endl;
+	}
 
 	getchar();
 }
