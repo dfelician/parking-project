@@ -1,106 +1,125 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <string>
+#include "Reservation.h"
 
 #define LOG_IN 1
 #define REGISTER 2
-#define EXIT 3
+#define ENTER 3
+#define EXIT 4
+#define HOME 5
 
 HMENU hMenu;
 HWND hRam_ID, hPassword, hPasswordCopy, hPermit_ID, hOut;
+ConnectToDB connectToDB;
 
-void AddControls(HWND hWnd) {
-	CreateWindowW(L"Button", L"Log In", WS_VISIBLE | WS_CHILD,
-		175, 100, 150, 25, hWnd, (HMENU) LOG_IN, NULL, NULL);
-	CreateWindowW(L"Button", L"Register", WS_VISIBLE | WS_CHILD,
-		175, 127, 150, 25, hWnd, (HMENU) REGISTER, NULL, NULL);
-	CreateWindowW(L"Button", L"Exit", WS_VISIBLE | WS_CHILD, 400, 10, 75, 50, hWnd, (HMENU)EXIT, NULL, NULL);
-}
-/*
-void AddMenus(HWND hWnd) {
-	hMenu = CreateMenu();
-	HMENU hFileMenu = CreateMenu();
-	HMENU hSubMenu = CreateMenu();
+void logIn() {
+	HWND hLogIn = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 
+		100, 100, 500, 500, NULL, NULL, NULL, NULL);
 
-	AppendMenu(hSubMenu, MF_STRING, NULL, L"Sub Menu");
+	CreateWindowW(L"Static", L"Log in", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		175, 100, 150, 25, hLogIn, NULL, NULL, NULL);
+	hRam_ID = CreateWindowW(L"Edit", L"RAM ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		175, 127, 150, 25, hLogIn, NULL, NULL, NULL);
+	hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
+		175, 154, 150, 25, hLogIn, NULL, NULL, NULL);
+	CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
+		175, 181, 150, 25, hLogIn, (HMENU)ENTER, NULL, NULL);
 
-	AppendMenu(hFileMenu, MF_STRING, REGISTER, L"Register");
-	AppendMenu(hFileMenu, MF_POPUP, (UINT_PTR) hSubMenu, L"Open SubMenu");
-	AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
-	AppendMenu(hFileMenu, MF_STRING, EXIT, L"Exit");
+	if (ENTER) {
+		char stdntID[7], pWord[20];
 
-	AppendMenu(hMenu, MF_POPUP, (UINT_PTR) hFileMenu, L"Home");
-	AppendMenu(hMenu, MF_STRING, NULL, L"Help");
+		GetWindowText(hRam_ID, (LPSTR)stdntID, 3.5);
+		GetWindowText(hPassword, (LPSTR)pWord, 10);
 
-	SetMenu(hWnd, hMenu);
-}*/
-LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
-	std::string conString = "DRIVER={ODBC Driver 17 for SQL Server}; SERVER=tcp:seniorproject4.database.windows.net, 1433; DATABASE=ParkingLot; UID=seniorproject; PWD=P@ssword;";
-
-	switch (msg) {
-	case WM_COMMAND:
-		switch (wp) {
-			char out[50];
-		case LOG_IN:
-			CreateWindowW(L"Static", L"Log in", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				175, 100, 150, 25, hWnd, NULL, NULL, NULL);
-			hRam_ID = CreateWindowW(L"Edit", L"RAM ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				175, 127, 150, 25, hWnd, NULL, NULL, NULL);
-			hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
-				175, 154, 150, 25, hWnd, NULL, NULL, NULL);
-
-			char stdntID[7], pWord[20];
-
-
-			GetWindowText(hRam_ID, (LPWSTR)stdntID, 3.5);
-			GetWindowText(hPassword, (LPWSTR)pWord, 10);
-
-			strcpy_s(out, stdntID);
-			strcpy_s(out, pWord);
-
-
-			break;
-		case REGISTER:
-			CreateWindowW(L"Static", L"Register", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				175, 100, 150, 25, hWnd, NULL, NULL, NULL);
-			hRam_ID = CreateWindowW(L"Edit", L"RAM ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				175, 127, 150, 25, hWnd, NULL, NULL, NULL);
-			hPermit_ID = CreateWindowW(L"Edit", L"Permit_ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				175, 154, 150, 25, hWnd, NULL, NULL, NULL);
-			hPassword = CreateWindowW(L"Edit", L"Create Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
-				175, 181, 150, 25, hWnd, NULL, NULL, NULL);
-			hPasswordCopy = CreateWindowW(L"Edit", L"Re-Enter Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
-				175, 208, 150, 25, hWnd, NULL, NULL, NULL);
-
-			char ramID[7], permit[7], psswrd[20], psswrdCpy[20];
-
-			GetWindowText(hRam_ID, (LPWSTR)ramID, 3.5);
-			GetWindowText(hPermit_ID, (LPWSTR)permit, 3.5);
-			GetWindowText(hPassword, (LPWSTR)psswrd, 10);
-			GetWindowText(hPasswordCopy, (LPWSTR)psswrdCpy, 10);
-
-			strcpy_s(out, ramID);
-			strcpy_s(out, permit);
-			strcpy_s(out, psswrd);
-			strcpy_s(out, psswrdCpy);
-			
-			break;
-		case EXIT:
-			DestroyWindow(hWnd);
-			break;
+		if (connectToDB.searchID(stdntID) == false) {
+			std::cout << "Ram ID not found.\n";
 		}
-		break;
-	case WM_CREATE:
-		AddControls(hWnd);
-		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
-		break;
-	default:
-		return DefWindowProcW(hWnd, msg, wp, lp);
+		else {
+			std::cout << "Ram ID found.\n";
+		}
 	}
 }
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow){
+void registerAccount(HWND hWnd) {
+	char out[50];
+	HWND hRegister = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		100, 100, 500, 500, NULL, NULL, NULL, NULL);
+
+	CreateWindowW(L"Static", L"Register", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		175, 100, 150, 25, hRegister, NULL, NULL, NULL);
+	hRam_ID = CreateWindowW(L"Edit", L"RAM ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		175, 127, 150, 25, hRegister, NULL, NULL, NULL);
+	hPermit_ID = CreateWindowW(L"Edit", L"Permit_ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		175, 154, 150, 25, hRegister, NULL, NULL, NULL);
+	hPassword = CreateWindowW(L"Edit", L"Create Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
+		175, 181, 150, 25, hRegister, NULL, NULL, NULL);
+	hPasswordCopy = CreateWindowW(L"Edit", L"Re-Enter Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
+		175, 208, 150, 25, hRegister, NULL, NULL, NULL);
+	CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
+		175, 235, 150, 25, hRegister, (HMENU)ENTER, NULL, NULL);
+
+	if (ENTER) {
+		char ramID[7], permit[7], psswrd[20], psswrdCpy[20];
+
+		GetWindowText(hRam_ID, (LPSTR)ramID, 3.5);
+		GetWindowText(hPermit_ID, (LPSTR)permit, 3.5);
+		GetWindowText(hPassword, (LPSTR)psswrd, 10);
+		GetWindowText(hPasswordCopy, (LPSTR)psswrdCpy, 10);
+
+		strcpy_s(out, ramID);
+		strcpy_s(out, permit);
+		strcpy_s(out, psswrd);
+		strcpy_s(out, psswrdCpy);
+	}
+
+}
+void AddMenus(HWND hWnd) {
+	hMenu = CreateMenu();
+
+	AppendMenu(hMenu, MF_POPUP, HOME, "Home");
+	AppendMenu(hMenu, MF_STRING, LOG_IN, "Log In");
+	AppendMenu(hMenu, MF_STRING, REGISTER, "Register");
+	AppendMenu(hMenu, MF_STRING, NULL, "Adminstrator");
+	AppendMenu(hMenu, MF_STRING, EXIT, "Exit");
+
+	SetMenu(hWnd, hMenu);
+}
+LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+		switch (msg) {
+		case WM_COMMAND:
+			switch (wp) {
+			case LOG_IN:
+				logIn();
+				break;
+			case REGISTER:
+				registerAccount(hWnd);
+				break;
+			case HOME:
+	CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		100, 100, 500, 500, NULL, NULL, NULL, NULL);
+				break;
+			case EXIT:
+				DestroyWindow(hWnd);
+				break;
+			}
+			break;
+		case WM_CREATE:
+			AddMenus(hWnd);
+			break;
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			break;
+		default:
+			return DefWindowProcW(hWnd, msg, wp, lp);
+		}
+}
+int main(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow) {
+
+	if (connectToDB.getConnectionStatus() == true)
+		std::cout << "Connected.\n";
+	else
+		std::cout << "Not Connected.\n";
+
 	WNDCLASSW wc = { 0 };
 
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -112,7 +131,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	if (!RegisterClassW(&wc))
 		return -1;
 
-	CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 500, 500, NULL, NULL, NULL, NULL);
+	CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+		100, 100, 500, 500, NULL, NULL, NULL, NULL);
 
 	MSG msg = { 0 };
 
