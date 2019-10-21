@@ -5,14 +5,13 @@
 #include <sql.h>
 
 class ConnectToDB {
-	SQLHANDLE SQLEnvHandle = NULL;
-	SQLHANDLE SQLConnectionHandle = NULL;
-	SQLHANDLE SQLStatementHandle = NULL;
-	SQLRETURN retCode = 0;
+	SQLHANDLE SQLEnvHandle;
+	SQLHANDLE SQLConnectionHandle;
+	SQLHANDLE SQLStatementHandle;
+	SQLRETURN retCode;
 	SQLCHAR SQLState[1024];
 	SQLCHAR message[1024];
-
-	bool connected = false;
+	bool success = false;
 
 	void showSQLError(unsigned int handleType, const SQLHANDLE& handle) {
 		if (SQL_SUCCESS == SQLGetDiagRec(handleType, handle, 1, SQLState, NULL, message, 1024, NULL))
@@ -21,7 +20,13 @@ class ConnectToDB {
 	}
 public:
 	ConnectToDB() {
-		char SQLQuery[] = "SELECT * FROM Student";
+		SQLHANDLE SQLEnvHandle = NULL;
+		SQLHANDLE SQLConnectionHandle = NULL;
+		SQLHANDLE SQLStatementHandle = NULL;
+		SQLRETURN retCode = 0;
+	}
+	bool queryDB(std::string SQLQuery, std::string userInput){
+		const std::string userVar = userInput;
 
 		do {
 			if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -72,30 +77,24 @@ public:
 				// Allocates the statement
 				break;
 
-			if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery, SQL_NTS)) {
+			if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS)) {
 				// Executes a preparable statement
 				showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
 				break;
 			}
-			else
-				connected = true;
-		} while (connected == false);
-	}
-	bool getConnectionStatus() {
-		return this->connected;
-	}
-	bool searchID(std::string userInput){
+			else {
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &userInput, sizeof(userInput), NULL);
+				if(userInput == userVar)
+					success = true;
+			}
+		} while (false);
 
-		std::string SQLQuery = "SELECT * FROM UserLogin WHERE UserName = '" + userInput + "'";
-
-
-
-	}
-	~ConnectToDB() {
 		SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 		SQLDisconnect(SQLConnectionHandle);
 		SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 		SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 		// Frees the resources and disconnects
+
+		return success;
 	}
 };
