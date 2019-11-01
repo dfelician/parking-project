@@ -126,12 +126,14 @@
   <ItemGroup>
     <ClCompile Include="checkSpots.cpp" />
     <ClCompile Include="dbTest.cpp" />
+    <ClCompile Include="register.cpp" />
     <ClCompile Include="reserveSpot.cpp" />
     <ClCompile Include="signIn.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="checkSpots.h" />
+    <ClInclude Include="register.h" />
     <ClInclude Include="reserveSpot.h" />
     <ClInclude Include="signIn.h" />
     <ClInclude Include="User.h" />

@@ -1,3 +1,6 @@
-﻿  reserveSpot.cpp
-C:\Users\felidp\source\repos\DBTest\DBTest\reserveSpot.cpp(91): warning C4715: 'reserveSpot': not all control paths return a value
+﻿  dbTest.cpp
+  register.cpp
+  reserveSpot.cpp
+  Generating Code...
+C:\Users\felidp\source\repos\DBTest\DBTest\reserveSpot.cpp(89): warning C4715: 'reserveSpot': not all control paths return a value
   DBTest.vcxproj -> C:\Users\felidp\source\repos\DBTest\Debug\DBTest.exe

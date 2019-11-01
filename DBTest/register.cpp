@@ -1,27 +1,43 @@
-#include "reserveSpot.h"
-using namespace std;
+#include "register.h"
 
 
-string reserveSpot(string userName) {
-	int selection;
+void registerUser() {
+	User user;
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
-	string SQLQuery = "";
-	string lotName = "";
-	string spotSelection = "";
-	//SQLQuery = "UPDATE PriorityParkingLot SET Number_Of_Spots_Reserved = Number_Of_Spots_Reserved + 1, Number_of_Spots_Available = Number_of_Spots_Available - 1 WHERE LotID = 'P01'";
 
-	cout << "Select a lot to park in:\n1.Priority Lot\n";
-	cin >> selection;
-	if (selection == 1) {
-		lotName = "Lot 1";
-		checkSpots();
-		cout << "Which spot would you like: " << endl;
-		cin >> spotSelection;
-		SQLQuery = "UPDATE Lot01 SET Available = 'N', UserName = '" + userName + "'" + "WHERE SpotNumber = " + spotSelection;
+	string inputUserName;
+	string inputPassword;
+	string inputPasswordVal;
+	bool check = false;
+	string studentID;
+
+	cout << "Enter username: \n";
+	cin >> inputUserName;
+
+	while (check == false) {
+		cout << "Enter password: \n";
+		cin >> inputPassword;
+		cout << "Re enter password: \n";
+		cin >> inputPasswordVal;
+
+		if (inputPassword == inputPasswordVal) {
+			check = true;
+		}
+		if (inputPassword != inputPasswordVal) {
+			cout << "Passwords do not match re-enter your password" << endl;
+		}
 	}
+
+	cout << "Enter your student ID" << endl;
+	cin >> studentID;
+
+
+	bool success = false;
+	string SQLQuery = "Insert INTO UserLogin VALUES('" + inputUserName + "', '" + inputPassword + "', '" + studentID + "')";
+
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -73,17 +89,21 @@ string reserveSpot(string userName) {
 		if (SQL_SUCCESS != SQLExecDirect(SQLStatementHandle, (SQLCHAR*)SQLQuery.c_str(), SQL_NTS)) {
 			// Executes a preparable statement
 			showSQLError(SQL_HANDLE_STMT, SQLStatementHandle);
-			return "Unexpected Error";
 			break;
 		}
 		else {
-			return "Spot " + spotSelection + " Reserved in " + lotName;
+			cout << "Registered user: " << inputUserName << endl;
 		}
 	} while (FALSE);
+
 
 
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 	SQLDisconnect(SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
+	// Frees the resources and disconnects
+
+	cout << "Please Login" << endl;
+	signIn();
 }
