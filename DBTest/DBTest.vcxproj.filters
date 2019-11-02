@@ -33,6 +33,12 @@
     <ClCompile Include="register.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="storedProc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="releaseSpot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="signIn.h">
@@ -48,6 +54,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="register.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="storedProc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="releaseSpot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,42 +1,24 @@
-#include "register.h"
+#include "releaseSpot.h"
 
-void registerUser() {
-	User user;
+void releaseSpot(string userName) {
+	int selection;
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
+	string SQLQuery = "";
+	string lotName = "";
 
-	string inputUserName;
-	string inputPassword;
-	string inputPasswordVal;
-	bool check = false;
-	string studentID;
+	//SQLQuery = "UPDATE PriorityParkingLot SET Number_Of_Spots_Reserved = Number_Of_Spots_Reserved + 1, Number_of_Spots_Available = Number_of_Spots_Available - 1 WHERE LotID = 'P01'";
 
-	cout << "Enter username: \n";
-	cin >> inputUserName;
+	cout << "\n---------Release Spot---------\n";
 
-	while (check == false) {
-		cout << "Enter password: \n";
-		cin >> inputPassword;
-		cout << "Re enter password: \n";
-		cin >> inputPasswordVal;
-
-		if (inputPassword == inputPasswordVal) {
-			check = true;
-		}
-		if (inputPassword != inputPasswordVal) {
-			cout << "Passwords do not match re-enter your password" << endl;
-		}
+	cout << "Which lot are you in?:\n1.Priority Lot\n";
+	cin >> selection;
+	if (selection == 1) {
+		lotName = "Lot 1";
+		SQLQuery = "UPDATE Lot01 SET Available = 'Y', UserName = '' WHERE "  + userName + "=UserName";
 	}
-
-	cout << "Enter your student ID" << endl;
-	cin >> studentID;
-
-
-	bool success = false;
-	string SQLQuery = "Insert INTO UserLogin VALUES('" + inputUserName + "', '" + inputPassword + "', '" + studentID + "')";
-
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -91,18 +73,13 @@ void registerUser() {
 			break;
 		}
 		else {
-			cout << "Registered user: " << inputUserName << endl;
+			cout << "Spot released, thank you!" << userName << endl;
 		}
 	} while (FALSE);
-
 
 
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 	SQLDisconnect(SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
-	// Frees the resources and disconnects
-
-	cout << "Please Login" << endl;
-	signIn();
 }

@@ -1,41 +1,14 @@
-#include "register.h"
+#include "storedProc.h"
 
-void registerUser() {
+void storedProc() {
 	User user;
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
 
-	string inputUserName;
-	string inputPassword;
-	string inputPasswordVal;
-	bool check = false;
-	string studentID;
-
-	cout << "Enter username: \n";
-	cin >> inputUserName;
-
-	while (check == false) {
-		cout << "Enter password: \n";
-		cin >> inputPassword;
-		cout << "Re enter password: \n";
-		cin >> inputPasswordVal;
-
-		if (inputPassword == inputPasswordVal) {
-			check = true;
-		}
-		if (inputPassword != inputPasswordVal) {
-			cout << "Passwords do not match re-enter your password" << endl;
-		}
-	}
-
-	cout << "Enter your student ID" << endl;
-	cin >> studentID;
-
-
 	bool success = false;
-	string SQLQuery = "Insert INTO UserLogin VALUES('" + inputUserName + "', '" + inputPassword + "', '" + studentID + "')";
+	string SQLQuery = "exec dbo.ReservationProc";
 
 
 	do {
@@ -91,7 +64,22 @@ void registerUser() {
 			break;
 		}
 		else {
-			cout << "Registered user: " << inputUserName << endl;
+			cout << "Success" << endl;
+			int id;
+			char ramID[256];
+			//int enrolled[256];
+			//int activePermit[256];
+			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
+				// Fetches the next rowset of data from the result
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &id, sizeof(id), NULL);
+				//SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &password, sizeof(password), NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &ramID, sizeof(ramID), NULL);
+				//	SQLGetData(SQLStatementHandle, 4, SQL_C_NUMERIC, &enrolled, sizeof(enrolled), NULL);
+				//  SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &activePermit, sizeof(activePermit), NULL);
+				//cout << "ID: " << id << " Name: " << fName << " " << lName << " Enrolled: " << enrolled << " Active Permit: " << activePermit << endl;
+				//cout << "Username : " << userName << "Password: " << password << "RAM ID: " << ramID << endl;
+				cout << "ID " << id << " RamID " << ramID << endl;
+			}
 		}
 	} while (FALSE);
 
@@ -101,8 +89,7 @@ void registerUser() {
 	SQLDisconnect(SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
+
 	// Frees the resources and disconnects
 
-	cout << "Please Login" << endl;
-	signIn();
 }

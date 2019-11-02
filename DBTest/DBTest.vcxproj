@@ -127,15 +127,19 @@
     <ClCompile Include="checkSpots.cpp" />
     <ClCompile Include="dbTest.cpp" />
     <ClCompile Include="register.cpp" />
+    <ClCompile Include="releaseSpot.cpp" />
     <ClCompile Include="reserveSpot.cpp" />
     <ClCompile Include="signIn.cpp" />
+    <ClCompile Include="storedProc.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="checkSpots.h" />
     <ClInclude Include="register.h" />
+    <ClInclude Include="releaseSpot.h" />
     <ClInclude Include="reserveSpot.h" />
     <ClInclude Include="signIn.h" />
+    <ClInclude Include="storedProc.h" />
     <ClInclude Include="User.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

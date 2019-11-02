@@ -9,6 +9,7 @@
 #include <string>
 #include "reserveSpot.h"
 #include "User.h"
+#include "releaseSpot.h"
 
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);
