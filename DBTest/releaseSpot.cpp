@@ -13,11 +13,19 @@ void releaseSpot(string userName) {
 
 	cout << "\n---------Release Spot---------\n";
 
-	cout << "Which lot are you in?:\n1.Priority Lot\n";
+	cout << "Which lot are you in?:\n1.Lot01\n2.Lot02\n3.Lot03\n";
 	cin >> selection;
 	if (selection == 1) {
-		lotName = "Lot 1";
-		SQLQuery = "UPDATE Lot01 SET Available = 'Y', UserName = '' WHERE "  + userName + "=UserName";
+		lotName = "Lot01";
+		SQLQuery = "UPDATE Lot01 SET Available = 'Y', UserName = 'User' WHERE UserName = '" + userName +"'";
+	}
+	else if (selection == 2) {
+		lotName = "Lot02";
+		SQLQuery = "UPDATE Lot02 SET Available = 'Y', UserName = 'User' WHERE UserName = '" + userName + "'";
+	}
+	else if (selection == 3) {
+		lotName = "Lot03";
+		SQLQuery = "UPDATE Lot03 SET Available = 'Y', UserName = 'User' WHERE UserName = '" + userName + "'";
 	}
 
 	do {
@@ -73,7 +81,7 @@ void releaseSpot(string userName) {
 			break;
 		}
 		else {
-			cout << "Spot released, thank you!" << userName << endl;
+			cout << "Spot released in " << lotName <<", thank you " << userName << "!" << endl;
 		}
 	} while (FALSE);
 

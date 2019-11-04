@@ -8,9 +8,10 @@
 #include <sqltypes.h>
 #include <sql.h>
 #include "signIn.h"
+#include <vector>
 
 using namespace std;
 
-void checkSpots();
+vector<string> checkSpots(string lotName);
 
 #endif

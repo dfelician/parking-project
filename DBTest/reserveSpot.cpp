@@ -10,19 +10,68 @@ string reserveSpot(string userName) {
 	SQLRETURN retCode = 0;
 	string SQLQuery = "";
 	string lotName = "";
-	string spotSelection = "";
+	int spotSelection;
+	string select;
+	vector<string> checkSpot;
 	//SQLQuery = "UPDATE PriorityParkingLot SET Number_Of_Spots_Reserved = Number_Of_Spots_Reserved + 1, Number_of_Spots_Available = Number_of_Spots_Available - 1 WHERE LotID = 'P01'";
 
 	cout << "\n---------Reserve Spot---------\n";
 
-	cout << "Select a lot to park in:\n1.Priority Lot\n";
+	cout << "Select a lot to park in:\n1.Lot01\n2.Lot02\n3.Lot03\n";
 	cin >> selection;
 	if (selection == 1) {
-		lotName = "Lot 1";
-		checkSpots();
-		cout << "Which spot would you like: " << endl;
-		cin >> spotSelection;
-		SQLQuery = "UPDATE Lot01 SET Available = 'N', UserName = '" + userName + "'" + "WHERE SpotNumber = " + spotSelection;
+		lotName = "Lot01";
+		checkSpot = checkSpots(lotName);
+		bool check = false;
+		while (check == false) {
+			cout << "Which spot would you like: " << endl;
+			cin >> spotSelection;
+
+			if (checkSpot[spotSelection - 1] == "N") {
+				cout << "Spot already taken." << endl;
+			}
+			else if (checkSpot[spotSelection - 1] == "Y") {
+				select = to_string(spotSelection);
+				check = true;
+			}
+		}
+		SQLQuery = "UPDATE Lot01 SET Available = 'N', UserName = '" + userName + "'" + "WHERE SpotNumber = " + select;
+	}
+	else if (selection == 2) {
+		lotName = "Lot02";
+		checkSpot = checkSpots(lotName);
+		bool check = false;
+		while (check == false) {
+			cout << "Which spot would you like: " << endl;
+			cin >> spotSelection;
+
+			if (checkSpot[spotSelection - 1] == "N") {
+				cout << "Spot already taken." << endl;
+			}
+			else if (checkSpot[spotSelection - 1] == "Y") {
+				select = to_string(spotSelection);
+				check = true;
+			}
+		}
+		SQLQuery = "UPDATE Lot02 SET Available = 'N', UserName = '" + userName + "'" + "WHERE SpotNumber = " + select;
+	}
+	else if (selection == 3) {
+		lotName = "Lot03";
+		checkSpot = checkSpots(lotName);
+		bool check = false;
+		while (check == false) {
+			cout << "Which spot would you like: " << endl;
+			cin >> spotSelection;
+
+			if (checkSpot[spotSelection - 1] == "N") {
+				cout << "Spot already taken." << endl;
+			}
+			else if (checkSpot[spotSelection - 1] == "Y") {
+				select = to_string(spotSelection);
+				check = true;
+			}
+		}
+		SQLQuery = "UPDATE Lot03 SET Available = 'N', UserName = '" + userName + "'" + "WHERE SpotNumber = " + select;
 	}
 
 	do {
@@ -79,7 +128,7 @@ string reserveSpot(string userName) {
 			break;
 		}
 		else {
-			return "Spot " + spotSelection + " Reserved in " + lotName;
+			return "Spot " + select + " Reserved in " + lotName;
 		}
 	} while (FALSE);
 

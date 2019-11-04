@@ -1,13 +1,14 @@
 #include "checkSpots.h"
-void checkSpots() {
+vector<string> checkSpots(string lotName) {
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
 
+	vector<string> spotCheck;
 
 	bool success = false;
-	string SQLQuery = "SELECT SpotNumber, Available FROM Lot01";
+	string SQLQuery = "SELECT SpotNumber, Available FROM " + lotName;
 
 
 	do {
@@ -70,6 +71,7 @@ void checkSpots() {
 				// Fetches the next rowset of data from the result
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &spotNumber, sizeof(spotNumber), NULL);
 				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &available, sizeof(available), NULL);
+				spotCheck.push_back(available);
 				cout << spotNumber << " " << available << " | ";
 				if (counter == 5) {
 					cout << "\n" << endl;
@@ -87,4 +89,5 @@ void checkSpots() {
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 
+	return spotCheck;
 }

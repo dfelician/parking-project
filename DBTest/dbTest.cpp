@@ -32,4 +32,8 @@ int main()
 	else {
 		cout << "Invalid input" << endl;
 	}
+
+	system("pause");
+
+	return 0;
 }

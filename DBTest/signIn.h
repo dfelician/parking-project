@@ -10,6 +10,7 @@
 #include "reserveSpot.h"
 #include "User.h"
 #include "releaseSpot.h"
+#include <vector>
 
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);
