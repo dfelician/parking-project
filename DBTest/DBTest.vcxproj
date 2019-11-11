@@ -126,6 +126,7 @@
   <ItemGroup>
     <ClCompile Include="checkSpots.cpp" />
     <ClCompile Include="dbTest.cpp" />
+    <ClCompile Include="lotReport.cpp" />
     <ClCompile Include="register.cpp" />
     <ClCompile Include="releaseSpot.cpp" />
     <ClCompile Include="reserveSpot.cpp" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="checkSpots.h" />
+    <ClInclude Include="lotReport.h" />
     <ClInclude Include="register.h" />
     <ClInclude Include="releaseSpot.h" />
     <ClInclude Include="reserveSpot.h" />

@@ -35,7 +35,7 @@ void registerUser() {
 
 
 	bool success = false;
-	string SQLQuery = "Insert INTO UserLogin VALUES('" + inputUserName + "', '" + inputPassword + "', '" + studentID + "')";
+	string SQLQuery = "Insert INTO UserLogin(UserName, Password, RamID, UserGroup) VALUES('" + inputUserName + "', '" + inputPassword + "', '" + studentID + "','U')";
 
 
 	do {

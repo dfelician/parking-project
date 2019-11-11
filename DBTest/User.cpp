@@ -7,3 +7,11 @@ string User::getUserName() {
 void User::setUserName(string inUserName) {
 	userName = inUserName;
 }
+
+string User::getUserGroup() {
+	return userGroup;
+}
+
+void User::setUserGroup(string uG) {
+	userGroup = uG;
+}

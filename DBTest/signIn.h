@@ -11,6 +11,7 @@
 #include "User.h"
 #include "releaseSpot.h"
 #include <vector>
+#include "lotReport.h"
 
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);

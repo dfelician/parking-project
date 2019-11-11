@@ -39,6 +39,9 @@
     <ClCompile Include="releaseSpot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lotReport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="signIn.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="releaseSpot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lotReport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

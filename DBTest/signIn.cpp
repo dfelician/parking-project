@@ -94,6 +94,8 @@ void signIn() {
 					char userName[256];
 					char password[256];
 					char ramID[256];
+					char userGroup[256];
+					int parkingPermit;
 					//int enrolled[256];
 					//int activePermit[256];
 					while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
@@ -101,9 +103,12 @@ void signIn() {
 						SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &userName, sizeof(userName), NULL);
 						SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &password, sizeof(password), NULL);
 						SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &ramID, sizeof(ramID), NULL);
+						SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &userGroup, sizeof(userGroup), NULL);
+						SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &parkingPermit, sizeof(parkingPermit), NULL);
 						if (inputUserName == userName && inputPassword == password) {
 							user.setUserName(userName);
-							cout << "Signed On " + user.getUserName() << endl;
+							user.setUserGroup(userGroup);
+							cout << "Signed On " << user.getUserName() << " Permit Number: " << parkingPermit<< endl;
 							success = true;
 						}
 					}
@@ -123,7 +128,18 @@ void signIn() {
 			cout << "Incorrect username or password" << endl;
 		}
 	}
-	if(user.getUserName() != "Guest") {
+
+
+	if (user.getUserGroup() == "A") {
+		int s;
+		cout << "----------Administrator Menu----------" << endl;
+		cout << "What would you like to do?" << endl;
+		cout << "1. Print Lot Report" << endl;
+		cin >> s;
+		if (s == 1) {
+			lotReport();
+		}
+	}else if(user.getUserName() != "Guest") {
 		int select;
 		cout << "Enter 1 to reserve a spot or 2 to release your spot: ";
 		cin >> select;
