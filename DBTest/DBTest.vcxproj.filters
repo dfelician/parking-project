@@ -42,6 +42,18 @@
     <ClCompile Include="lotReport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sendFacultyRequest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sendStudentReport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="getSpotNumber.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="viewStudentReport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="signIn.h">
@@ -66,6 +78,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lotReport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sendFacultyRequest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sendStudentReport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="getSpotNumber.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="viewStudentReport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

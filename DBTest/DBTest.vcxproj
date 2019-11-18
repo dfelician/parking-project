@@ -126,23 +126,31 @@
   <ItemGroup>
     <ClCompile Include="checkSpots.cpp" />
     <ClCompile Include="dbTest.cpp" />
+    <ClCompile Include="getSpotNumber.cpp" />
     <ClCompile Include="lotReport.cpp" />
     <ClCompile Include="register.cpp" />
     <ClCompile Include="releaseSpot.cpp" />
     <ClCompile Include="reserveSpot.cpp" />
+    <ClCompile Include="sendFacultyRequest.cpp" />
+    <ClCompile Include="sendStudentReport.cpp" />
     <ClCompile Include="signIn.cpp" />
     <ClCompile Include="storedProc.cpp" />
     <ClCompile Include="User.cpp" />
+    <ClCompile Include="viewStudentReport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="checkSpots.h" />
+    <ClInclude Include="getSpotNumber.h" />
     <ClInclude Include="lotReport.h" />
     <ClInclude Include="register.h" />
     <ClInclude Include="releaseSpot.h" />
     <ClInclude Include="reserveSpot.h" />
+    <ClInclude Include="sendFacultyRequest.h" />
+    <ClInclude Include="sendStudentReport.h" />
     <ClInclude Include="signIn.h" />
     <ClInclude Include="storedProc.h" />
     <ClInclude Include="User.h" />
+    <ClInclude Include="viewStudentReport.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

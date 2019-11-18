@@ -135,13 +135,30 @@ void signIn() {
 		cout << "----------Administrator Menu----------" << endl;
 		cout << "What would you like to do?" << endl;
 		cout << "1. Print Lot Report" << endl;
+		cout << "2.View Student Reports" << endl;
 		cin >> s;
 		if (s == 1) {
 			lotReport();
 		}
-	}else if(user.getUserName() != "Guest") {
+		else if (s == 2) {
+			viewStudentReport();
+		}
+	}
+	else if (user.getUserGroup() == "F") {
+		int s;
+		cout << "---------Faculty Menu---------" << endl;
+		cout << "What would you like to do?" << endl;
+		cout << "1. Send Multiple Reserve Requests";
+		cin >> s;
+		if (s == 1) {
+
+		}
+	}
+	else if(user.getUserName() != "Guest") {
 		int select;
-		cout << "Enter 1 to reserve a spot or 2 to release your spot: ";
+		cout << "---------Student Menu---------" << endl;
+		cout << "What would you like to do?" << endl;
+		cout << "1.Reserve a spot\n2.Release your spot\n3.Report your spot taken\n";
 		cin >> select;
 		if (select == 1) {
 			string reserveStatus = reserveSpot(user.getUserName());
@@ -149,6 +166,9 @@ void signIn() {
 		}
 		else if (select == 2) {
 			releaseSpot(user.getUserName());
+		}
+		else if (select == 3) {
+			sendStudentReport(user.getUserName());
 		}
 	}
 }

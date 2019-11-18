@@ -12,6 +12,8 @@
 #include "releaseSpot.h"
 #include <vector>
 #include "lotReport.h"
+#include "sendStudentReport.h"
+#include "viewStudentReport.h"
 
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);
