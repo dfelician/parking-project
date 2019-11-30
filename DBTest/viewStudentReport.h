@@ -3,8 +3,9 @@
 
 #include "signIn.h"
 #include "getSpotNumber.h"
+#include "approveRequest.h"
 
-void viewStudentReport();
+void viewStudentReport(int s);
 
 
 #endif

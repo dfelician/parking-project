@@ -3,7 +3,7 @@
 
 #include "signIn.h"
 
-vector<string> sendFacultyRequest(string userName, int i);
+void sendFacultyRequest(string userName);
 
 
 #endif

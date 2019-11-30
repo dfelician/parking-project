@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="approveRequest.cpp" />
     <ClCompile Include="checkSpots.cpp" />
     <ClCompile Include="dbTest.cpp" />
     <ClCompile Include="getSpotNumber.cpp" />
@@ -139,6 +140,7 @@
     <ClCompile Include="viewStudentReport.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="approveRequest.h" />
     <ClInclude Include="checkSpots.h" />
     <ClInclude Include="getSpotNumber.h" />
     <ClInclude Include="lotReport.h" />

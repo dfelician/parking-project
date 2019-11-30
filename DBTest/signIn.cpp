@@ -136,22 +136,24 @@ void signIn() {
 		cout << "What would you like to do?" << endl;
 		cout << "1. Print Lot Report" << endl;
 		cout << "2.View Student Reports" << endl;
+		cout << "3. View Faculty Requests" << endl;
 		cin >> s;
 		if (s == 1) {
 			lotReport();
 		}
-		else if (s == 2) {
-			viewStudentReport();
+		else if (s == 2 || s == 3) {
+			viewStudentReport(s);
 		}
+		
 	}
 	else if (user.getUserGroup() == "F") {
 		int s;
 		cout << "---------Faculty Menu---------" << endl;
 		cout << "What would you like to do?" << endl;
-		cout << "1. Send Multiple Reserve Requests";
+		cout << "1. Send Multiple Reserve Requests\n";
 		cin >> s;
 		if (s == 1) {
-
+			sendFacultyRequest(user.getUserName());
 		}
 	}
 	else if(user.getUserName() != "Guest") {

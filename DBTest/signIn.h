@@ -14,6 +14,7 @@
 #include "lotReport.h"
 #include "sendStudentReport.h"
 #include "viewStudentReport.h"
+#include "sendFacultyRequest.h"
 
 
 void showSQLError(unsigned int handleType, const SQLHANDLE& handle);
