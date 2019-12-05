@@ -79,7 +79,15 @@ bool ConnectToDB::findUser(std::string SQLQuery, std::string nameInput, std::str
 				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &password, sizeof(password), NULL);
 				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &grp, sizeof(grp), NULL);
 
-				if ((std::string)username == nameInput && (std::string)password == passInput) {
+				bool nameFound = true;
+
+				for (int i = 0; i < ((std::string)username).length(); i++) {
+					if (std::toupper(((std::string)username)[i]) != std::toupper(nameInput[i])) {
+						nameFound = false;
+						break;
+					}
+				}
+				if (nameFound == true && (std::string)password == passInput) {
 					success = true;
 					usrGrp = grp;
 				}
@@ -364,6 +372,8 @@ void ConnectToDB::insertStatement(std::string SQLQry) {
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
+
+	std::cout << SQLQry << std::endl;
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -789,7 +799,7 @@ void ConnectToDB::getRequests(std::vector<std::string>& nameVec, std::vector<std
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
 
-	std::string SQLQuery = "select username, lotname, convert(varchar, dateofevent,7) numspots, eventname from pendingrequests";
+	std::string SQLQuery = "select username, lotname, convert(varchar, dateofevent,7), numspots, eventname from pendingrequests";
 
 
 	do {

@@ -33,10 +33,11 @@ void ParkingLot::addMenus(HWND hWnd) {
  ****	addInfo function	****
  *******************************/
 void ParkingLot::addInfo(HWND wndw) {
-	char class1[256], class2[256], class3[256], class4[256], class5[256], class6[256],
-		make[256], model[256], plate[256];
+		char make[256], model[256], plate[256];
 
 	if (userGroup == "U") {
+		char class1[256], class2[256], class3[256], class4[256], class5[256], class6[256];
+
 		GetWindowText(hClass1, class1, 128);
 		GetWindowText(hClass2, class2, 128);
 		GetWindowText(hClass3, class3, 128);
@@ -47,44 +48,49 @@ void ParkingLot::addInfo(HWND wndw) {
 		std::string classes[6]{ (std::string) class1, (std::string)class2, (std::string)class3,
 			(std::string)class4, (std::string)class5, (std::string)class6 };
 
-		for (int i = 0; i < 6; i++) {
-			std::cout << classes[i] << std::endl;
-			if (classes[i] == "") {						//no CRN was entered
+		for (int i = 0; i < 6; i++) {		//check each class
+			if (i == 0)
+				if (classes[i] == "") {					//class one empty
+					MessageBoxW(wndw, L"You must have at least one class in your schedule (1)Class 1", L"Class Schedule", MB_OK);
+					return;
+				}
+
+			if (classes[i] == "" || classes[i] == "NONE") {					//no class entered
 				classes[i] = "NULL";				//make it null
 				continue;
 			}
-			else if (classes[i].length() != 5) {					//is not 5 character
+			if (classes[i].length() != 5) {					//is not 5 characters
 				MessageBoxW(wndw, L"CRN is a 5 digit identifier", L"Class Schedule", MB_OK);
-
 				return;
 			}
-			std::cout << classes[i] << std::endl;
-			for (int k = 0; k < classes[i].length(); k++) {
+			for (unsigned int k = 0; k < classes[i].length(); k++) {
 				if ((classes[i])[k] < '0' || (classes[i])[k] > '9') {				//is not all numbers
-					MessageBoxW(wndw, L"CRN is a 5 digit identifier", L"Class Schedule", MB_OK);
-
+					MessageBoxW(wndw, L"CRN is a 5 digit identifie", L"Class Schedule", MB_OK);
 					return;
 				}
 			}
-
 			bool courseExist = databaseConnect.findCourse("Select CRN from course where CRN = '" +
 				(std::string)classes[i] + "'", classes[i]);			//does course exist?
 
 			if (courseExist == false) {				//course does not exist
 				MessageBoxW(wndw, L"You entered an invalid course", L"Class Schedule", MB_OK);
-
 				return;
 			}
-		}
+			if (classes[i] != "") {						//valid CRN was entered
+				classes[i] = "'" + classes[i] + "'";		//put quotes for inserting
+			}
+		}										///		end class check
 
 		//insert to student's schedule
-		databaseConnect.insertStatement("Insert into schedule_test values('" + (std::string)ramID + "','" + (std::string)class1 +
-			"','" + (std::string)class2 + "','" + (std::string)class3 + "','" + (std::string)class4 + "','" + (std::string)class5
-			+ "','" + (std::string)class6 + "')");
+		databaseConnect.insertStatement("Insert into schedule_test values((select ramid from userlogin where username like '"
+			+ (std::string) user + "')," + classes[0] + "," + classes[1] + "," + classes[2]
+			+ "," + classes[3] + "," + classes[4] + "," + classes[5] + ")");
+
 		//update student schedule
-		std::string updateSch = "Update schedule_test set class1 = '" + (std::string)class1 + "' ,class2 = '" + (std::string)class2
-			+ "',class3 = '" + (std::string)class3 + "',class4 = '" + (std::string)class4 + "',class5 = '" + (std::string)class5 + "',class6 = '"
-			+ (std::string)class6 + "' where ramID = (select ramid from userlogin where username = '" + (std::string) user + "')";
+		std::string updateSch = "Update schedule_test set class1 = " + classes[0] + ", class2 = " + classes[1]
+			+ ", class3 = " + classes[2] + ", class4 = " + classes[3] + ", class5 = " + classes[4] + ", class6 = "
+			+ classes[5] + " where ramID = (select ramid from userlogin where username like '"
+			+ (std::string) user + "')";
 
 		databaseConnect.insertStatement(updateSch);
 	}
@@ -93,9 +99,13 @@ void ParkingLot::addInfo(HWND wndw) {
 	GetWindowText(hModel, model, 128);
 	GetWindowText(hPlate, plate, 128);
 
+	if (((std::string) plate) == "" || ((std::string) model) == "" || ((std::string) plate) == "") {
+		MessageBoxW(wndw, L"All Fields Required\n(1)Make\n(2)Model\n(3)License Plate", L"Vehicle Info", MB_OK);
+		return;
+	}
+
 	if (((std::string) plate).length() > 8) {		//license plate has more characters than max (8)
 		MessageBoxW(wndw, L"License plate number cannot be greater than 8 characters", L"Vehicle Info", MB_OK);
-
 		return;
 	}
 
@@ -145,7 +155,9 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 	databaseConnect.getProfile((std::string)user, profile, userGroup);
 
 
-	for (int i = 0; i < profile.size(); i++) {
+	for (unsigned int i = 0; i < profile.size(); i++) {
+		if (profile[i] == "" || profile[i] == " ")
+			profile[i] = "NONE";
 		profileInfo[i] = widen(profile[i]);
 	}
 
@@ -171,9 +183,18 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 
 	if (userGroup == "U") {
 		CreateWindowW(L"Static", L"CLASS SCHEDULE", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//Schedule
-			headingCenterX, bottomButton - 334, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
+			headingCenterX, bottomButton - 361, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Leave blank where no class\n(Enter the CRN)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 280, buttonWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
+			centerX, bottomButton - 307, buttonWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
+
+		CreateWindowW(L"Static", L"CRN", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Class Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + secondColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Start Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + thirdColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"End Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fourthColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass1 = CreateWindowW(L"Edit", profileInfo[3].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos, bottomButton - 216, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
@@ -291,6 +312,13 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		GetWindowText(hFirstName, (LPSTR)first, 128);
 		GetWindowText(hLastName, (LPSTR)last, 128);
 
+
+		if (((std::string) ramID) == "" || ((std::string) psswrd) == "" || ((std::string) user) == ""
+			|| ((std::string) first) == "" || ((std::string) last) == "") {
+			MessageBoxW(hSignUp, L"All Fields Required\n(1)First Name\n(2)Last Name\n(3)Ram ID\n(4)User Name\n(5)Password", L"Sign Up", MB_OK);
+			return;
+		}
+
 		bool inSystem = databaseConnect.getStudent("select username, ramid from userlogin where username like '" + (std::string) user
 			+ "' or ramid = '" + (std::string) ramID + "'", (std::string) user, (std::string) ramID);		//check if already in database
 
@@ -366,8 +394,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			hSignIN = staffParkingLotMenu(hSignIN);
 		}						
 		else											//login not successful
-			MessageBoxW(hSignIN, L"Account Not Found", L"Information Incorrect", MB_OK);			//display error message
-
+			MessageBoxW(hSignIN, L"Information Incorrect or Failed Network Connection", L"Account Not Found", MB_OK);			//display error message
 	}
 	/*
 	 ****	logIn function	****
@@ -381,7 +408,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			headingCenterX, 27, headingWidth, headingHeight, hLogIn, NULL, NULL, NULL);
 		hUserName = CreateWindowW(L"Edit", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			centerX, centerY, buttonWidth, buttonHeight, hLogIn, NULL, NULL, NULL);					//enter user name from screen
-		hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
+		hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			centerX, centerY + 27, buttonWidth, buttonHeight, hLogIn, NULL, NULL, NULL);				//password
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
 			centerX, centerY + 54, buttonWidth, buttonHeight, hLogIn, HMENU(SIGN_IN), NULL, NULL);		//SIGN_IN case
@@ -477,12 +504,84 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		hEvent = CreateWindowW(L"Edit", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//username
 			centerX, centerY, buttonWidth, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 54, buttonWidth, buttonHeight, hMoreSpots, (HMENU)MULTIPLE, NULL, NULL);
+			centerX, centerY + 54, buttonWidth, buttonHeight, hMoreSpots, (HMENU)MORE, NULL, NULL);
 
 		return hMoreSpots;
 	}
 	void ParkingLot::sendRequest(HWND hRequesting) {
+		char requestLot[256], requestDate[256], requestSpots[256], eventRequest[256];
+		int spotsRequested;
 
+		GetWindowText(hLot, requestLot, 128);
+		GetWindowText(hDate, requestDate, 128);
+		GetWindowText(hSpots, requestSpots, 128);
+		GetWindowText(hEvent, eventRequest, 128);
+
+		if (((std::string) requestLot) == "" || ((std::string) requestDate) == "" ||
+			((std::string) requestSpots) == "" || ((std::string) eventRequest) == "") {
+			MessageBoxW(hRequesting, L"All Fields Required\n(1)Lot\n(2)Date\n(3)Number of Spots\n(4)Event Title", L"Request Spots", MB_OK);
+			return;
+		}
+
+		if (((std::string) requestSpots)[0] > 'A' && ((std::string) requestSpots)[0] < 'Z'
+			|| ((std::string) requestSpots)[0] > 'a' && ((std::string) requestSpots)[0] < 'z') {
+			MessageBoxW(hRequesting, L"Enter a number", L"Request Spots", MB_OK);
+
+			return;
+		}
+
+		spotsRequested = std::stoi((std::string) requestSpots);
+		wchar_t spot[256];								//generartes spot number
+		wsprintfW(spot, L"%d", spotsRequested);
+
+		if (((std::string) requestDate).length() != 10) {					//is not 5 character
+				MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+				return;
+		}
+
+		for (unsigned int k = 0; k < ((std::string) requestDate).length(); k++) {
+			if (k == 4 || k == 7) {			//check for dashes
+				if (((std::string) requestDate)[k] != '-') {		//no dashes
+					MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+					return;
+				}
+				continue;						//has dashes
+			}
+			else if (((std::string) requestDate)[k] < '0' || ((std::string) requestDate)[k] > '9') {	//is not all numbers
+				MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+				return;
+			}
+			else if (k == 5) {								//check month input
+				if (((std::string) requestDate)[k] > '1') {				//first 'M' cannot be greater than 1	
+					MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+					return;
+				}
+				else if (((std::string) requestDate)[k] == '1')	{			//when first 'M' is 1
+					if (((std::string) requestDate)[k + 1] > '2') {				//second 'M' cannot be greater than 2
+						MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+						return;
+					}
+				}
+			}
+			else if (k == 8) {				//check date input
+				if (((std::string) requestDate)[k] > '3') {			//first 'D' cannot be greater than 3
+					MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+					return;
+				}
+				else if(((std::string) requestDate)[k] == '3') {	//when first 'D' is 3
+					if (((std::string) requestDate)[k + 1] > '1') {		//second 'D' cannot be greater than 1
+						MessageBoxW(hRequesting, L"Invalid Date (YYYY-MM-DD)", L"Request Spots", MB_OK);
+						return;
+					}
+				}
+			}
+		}
+
+			databaseConnect.insertStatement("insert into pendingrequests values('" + (std::string) user
+				+ "','" + (std::string) requestLot + "','" + (std::string) requestDate + "'," + (std::string) requestSpots
+				+ ",'" + (std::string) eventRequest + "','N')");
+
+			hRequesting = staffParkingLotMenu(hRequesting);
 	}
 	/*
 	****	lot12 function	****
@@ -689,20 +788,25 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 	********************************/
 	void ParkingLot::reserve(HWND hReserve) {
 		char spotNumber[256];
-		int spotSelection;
+		unsigned int spotSelection;
 		bool hasClass = false;
 		std::vector<std::string> availSpots;
 
 		GetWindowText(hSpotNumber, (LPSTR)spotNumber, 128);
+		for(unsigned int j = 0; j < ((std::string) spotNumber).length(); j++)
+			if (((std::string) spotNumber)[j] >= 'A' && ((std::string) spotNumber)[j] <= 'Z'
+				|| ((std::string) spotNumber)[j] >= 'a' && ((std::string) spotNumber)[j] <= 'z') {
+				MessageBoxW(hReserve, L"Enter a spot number", L"Reservation", MB_OK);
+				return;
+			}
 
-		if (((std::string) spotNumber)[0] > 'A' && ((std::string) spotNumber)[0] < 'Z'
-			|| ((std::string) spotNumber)[0] > 'a' && ((std::string) spotNumber)[0] < 'z') {
+		if (((std::string) spotNumber) > "0" && ((std::string) spotNumber) < std::to_string(999999)) {
+			spotSelection = std::stoi((std::string) spotNumber);
+		}else {
 			MessageBoxW(hReserve, L"Enter a spot number", L"Reservation", MB_OK);
-
 			return;
 		}
 
-		spotSelection = std::stoi((std::string) spotNumber);
 		wchar_t spot[256];								//generartes spot number
 		wsprintfW(spot, L"%d", spotSelection);
 
@@ -727,7 +831,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 					databaseConnect.getStartOfClasses((std::string)user, classTimes);
 
-					for (int i = 0; i < classTimes.size(); i++) {
+					for (unsigned int i = 0; i < classTimes.size(); i++) {
 						std::cout << classTimes[i] << std::endl;
 
 						if (classTimes[i] < plus && classTimes[i] > timeRN) {
@@ -766,19 +870,21 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 		GetWindowText(hSpotNumber, (LPSTR)spotNumber, 128);
 
-		if (((std::string) spotNumber)[0] > 'A' && ((std::string) spotNumber)[0] < 'Z'
-			|| ((std::string) spotNumber)[0] > 'a' && ((std::string) spotNumber)[0] < 'z') {
+		for (unsigned int j = 0; j < ((std::string) spotNumber).length(); j++)
+			if (((std::string) spotNumber)[j] >= 'A' && ((std::string) spotNumber)[j] <= 'Z'
+				|| ((std::string) spotNumber)[j] >= 'a' && ((std::string) spotNumber)[j] <= 'z') {
+				MessageBoxW(hRelease, L"Enter a spot number", L"Reservation", MB_OK);
+				return;
+			}
+
+		if (((std::string) spotNumber) > "0" && ((std::string) spotNumber) < std::to_string(999999)) {
+			spotSelection = std::stoi((std::string) spotNumber);
+		}
+		else {
 			MessageBoxW(hRelease, L"Enter a spot number", L"Reservation", MB_OK);
-
-			if (userGroup == "U")
-				hRelease = studentParkingLotMenu(hRelease);
-			else
-				hRelease = staffParkingLotMenu(hRelease);
-
 			return;
 		}
 
-		spotSelection = std::stoi((std::string) spotNumber);
 
 		if (spotSelection == theirSpot) {
 			wchar_t spot[256];								//generartes spot number
@@ -833,7 +939,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		if (found == true && userGroup == "A")							//login successful
 			hAdminOpt = adminMenu(hAdminOpt);						//open parking Lot menu
 		else											//login not successful
-			MessageBoxW(hAdminOpt, L"Account Not Found", L"Information Incorrect", MB_OK);			//display error message
+			MessageBoxW(hAdminOpt, L"Information Incorrect or Failed Network Connection", L"Account Not Found", MB_OK);			//display error message
 
 	}
 	/*	
@@ -864,8 +970,6 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
-		std::vector<int> spot;
-		std::vector<std::string> name, plate;
 		std::string allLots[] = { "Lot01", "Lot02", "Lot03" };
 
 		CreateWindowW(L"Static", L"Reservations", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
@@ -889,13 +993,18 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		std::vector<std::wstring> thisLot;
 
 		for (int c = 0; c < 3; c++) {
+			std::vector<int> spot;
+			std::vector<std::string> name, plate;
+			std::vector<std::wstring> thisName, thisPlate;
+
 			databaseConnect.getReservations(name, spot, plate, allLots[c]);
 			thisLot.push_back(widen(allLots[c]));
 
-			std::vector<std::wstring> thisName, thisPlate;
+			for (unsigned int k = 0; k < name.size(); k++) {
+				std::cout << allLots[c] + '\t' + std::to_string(spot[k]) + '\t' + name[k] + '\t' + plate[k] << std::endl;
 
-			for (int k = 0; k < name.size(); k++) {
 				wchar_t isReserved[256], isSpot[256];
+
 				thisName.push_back(widen(name[k]));
 				thisPlate.push_back(widen(plate[k]));
 
@@ -903,15 +1012,15 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 				wsprintfW(isReserved, L"%d", k * c + 1);
 
 				CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisName[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					buttonWidth + horizonatalMargin + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					buttonWidth + horizonatalMargin + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisLot[c].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", isSpot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k * c+ 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisPlate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			}
 		}
 		return reserveView;
@@ -942,17 +1051,20 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Number Spots", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
-		CreateWindowW(L"Static", L"License Plate", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		CreateWindowW(L"Static", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Event Date", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			(buttonWidth + horizonatalMargin) * 5 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 
-		databaseConnect.getRequests(name, lot, date, event, spots);
-		std::vector<std::wstring> thisName, thisEvent, thisLot;
+		databaseConnect.getRequests(name, lot, event, date, spots);
+		std::vector<std::wstring> thisName, thisEvent, thisLot, thisDate;
 
-			for (int k = 0; k < name.size(); k++) {
+			for (unsigned int k = 0; k < name.size(); k++) {
 				wchar_t isReserved[256], aSpot[256];
 				thisName.push_back(widen(name[k]));
 				thisEvent.push_back(widen(event[k]));
 				thisLot.push_back(widen(lot[k]));
+				thisDate.push_back(widen(date[k]));
 
 				wsprintfW(aSpot, L"%d", spots[k]);
 				wsprintfW(isReserved, L"%d", k + 1);
@@ -967,6 +1079,8 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 					(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisEvent[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 					(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				CreateWindowW(L"Static", thisDate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+					(buttonWidth + horizonatalMargin) * 5 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			}
 		return reserveView;
 	}
@@ -1002,7 +1116,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		databaseConnect.getReports(name, lot, spot, lcnsPlt);
 		std::vector<std::wstring> thisName, thisPlate, thisLot;
 
-		for (int k = 0; k < name.size(); k++) {
+		for (unsigned int k = 0; k < name.size(); k++) {
 			wchar_t isReserved[256], isSpot[256];
 			thisName.push_back(widen(name[k]));
 			thisPlate.push_back(widen(lcnsPlt[k]));
@@ -1059,7 +1173,10 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 		if (((std::string) licensePlate).length() > 8) {		//license plate has more characters than max (8)
 			MessageBoxW(hStolen, L"License plate number cannot be greater than 8 characters", L"Notice", MB_OK);
-
+			return;
+		}
+		if (((std::string) licensePlate) == "") {		//license plate has more characters than max (8)
+			MessageBoxW(hStolen, L"Enter the license plate number", L"Notice", MB_OK);
 			return;
 		}
 
