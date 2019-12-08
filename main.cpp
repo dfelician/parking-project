@@ -7,6 +7,9 @@ ParkingLot farmingdale;
 
 /******************** header ***************************/
 LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
+	static int g_scrollY = 0;
+	static int g_scrollX = 0;
+
 		switch (msg) {								//checks message from screen
 		case WM_COMMAND:
 			switch (wp) {							//when a button is pressed
@@ -99,9 +102,143 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			default:
 				break;
 			}
-		case WM_CREATE:
+		case WM_CREATE: {
 			farmingdale.addMenus(hWnd);										//displays menu items
-			break;
+			EnableScrollBar(hWnd, SB_BOTH, ESB_ENABLE_BOTH);
+		}
+			case WM_LBUTTONDOWN: {
+				SCROLLINFO si = { 0 };
+				si.cbSize = sizeof(SCROLLINFO);
+				si.fMask = SIF_POS;
+				si.nPos = 0;
+				si.nTrackPos = 0;
+				GetScrollInfo(hWnd, SB_VERT, &si);
+				GetScrollInfo(hWnd, SB_HORZ, &si);
+				break;
+			}
+			case WM_VSCROLL: {
+				auto action = LOWORD(wp);
+				HWND hScroll = (HWND)lp;
+				int pos = -1;
+				RECT r;
+
+				if (action == SB_THUMBPOSITION || action == SB_THUMBTRACK) {
+					pos = HIWORD(wp);
+				}
+				else if (action == SB_LINEDOWN) {
+					pos = g_scrollY + 50;
+				}
+				else if (action == SB_LINEUP) {
+					pos = g_scrollY - 50;
+				}
+				else if (action == SB_PAGEUP) {
+					GetClientRect(hWnd, &r);
+					pos = g_scrollY - r.top;
+				}
+				else if (action == SB_PAGEDOWN) {
+					GetClientRect(hWnd, &r);
+					pos = g_scrollY + r.bottom;
+				}
+				if (pos == -1)
+					break;
+				SCROLLINFO si = { 0 };
+				si.cbSize = sizeof(SCROLLINFO);
+				si.fMask = SIF_POS;
+				si.nPos = pos;
+				si.nTrackPos = 0;
+				SetScrollInfo(hWnd, SB_VERT, &si, true);
+
+				GetScrollInfo(hWnd, SB_VERT, &si);
+				pos = si.nPos;
+				POINT pt;
+				pt.x = 0;
+				pt.y = pos - g_scrollY;
+				auto hdc = GetDC(hWnd);
+				LPtoDP(hdc, &pt, 1);
+				ReleaseDC(hWnd, hdc);
+				ScrollWindow(hWnd, 0, -pt.y, NULL, NULL);
+				g_scrollY = pos;
+				return 0;
+			}
+			case WM_HSCROLL: {
+				auto action = LOWORD(wp);
+				HWND hScroll = (HWND)lp;
+				int pos = -1;
+				RECT r;
+
+				if (action == SB_THUMBPOSITION || action == SB_THUMBTRACK) {
+					pos = HIWORD(wp);
+				}
+				else if (action == SB_LINELEFT) {
+					pos = g_scrollX + 50;
+				}
+				else if (action == SB_LINERIGHT) {
+					pos = g_scrollX - 50;
+				}
+				else if (action == SB_PAGELEFT) {
+					GetClientRect(hWnd, &r);
+					pos = g_scrollX - r.left;
+				}
+				else if (action == SB_PAGERIGHT) {
+					GetClientRect(hWnd, &r);
+					pos = g_scrollX + r.right;
+				}
+				if (pos == -1)
+					break;
+				SCROLLINFO si = { 0 };
+				si.cbSize = sizeof(SCROLLINFO);
+				si.fMask = SIF_POS;
+				si.nPos = pos;
+				si.nTrackPos = 0;
+				SetScrollInfo(hWnd, SB_HORZ, &si, true);
+
+				GetScrollInfo(hWnd, SB_HORZ, &si);
+				pos = si.nPos;
+				POINT pt;
+				pt.x = pos - g_scrollX;
+				pt.y = 0;
+				auto hdc = GetDC(hWnd);
+				LPtoDP(hdc, &pt, 1);
+				ReleaseDC(hWnd, hdc);
+				ScrollWindow(hWnd, -pt.x, 0, NULL, NULL);
+				g_scrollX = pos;
+				return 0;
+			}
+			case WM_SIZE: {
+				RECT rc = { 0 };
+				GetClientRect(hWnd, &rc);
+				SCROLLINFO si = { 0 };
+
+				si.cbSize = sizeof(SCROLLINFO);
+				si.fMask = SIF_ALL;
+				si.nMin = 0;
+				si.nMax = farmingdale.getWindowHeight();
+				if (si.nPos > 100)
+					si.nMax = 5000;
+				if (SB_THUMBPOSITION == 100) {
+					si.nMax = farmingdale.getWindowHeight();
+				}
+				si.nPage = (rc.bottom - rc.top);
+				si.nPos = 0;
+				si.nTrackPos = 0;
+
+				SetScrollInfo(hWnd, SB_VERT, &si, true);
+
+				si.cbSize = sizeof(SCROLLINFO);
+				si.fMask = SIF_ALL;
+				si.nMin = 0;
+				si.nMax = farmingdale.getWindowWidth();
+				if (si.nPos > 100)
+					si.nMax = 5000;
+				if (SB_THUMBPOSITION == 100) {
+					si.nMax = farmingdale.getButtonWidth();
+				}
+				si.nPos = 0;
+				si.nTrackPos = 0;
+
+				SetScrollInfo(hWnd, SB_HORZ, &si, true);
+				break;
+			}
 		default:
 			return DefWindowProcW(hWnd, msg, wp, lp);
 		}

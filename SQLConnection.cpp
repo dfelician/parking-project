@@ -373,8 +373,6 @@ void ConnectToDB::insertStatement(std::string SQLQry) {
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
 
-	std::cout << SQLQry << std::endl;
-
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
 			// Allocates the environment

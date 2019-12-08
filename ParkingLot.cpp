@@ -5,17 +5,24 @@
  ****	loadImages function		****
  ***********************************/
 void ParkingLot::loadImages(HWND wnd) {
+	screen.GetDesktopResolution(windowWidth, windowHeight);
 	hBackgroundPic = (HBITMAP)LoadImageW(NULL, L"Farmingdale_State_College_logo_1.bmp", IMAGE_BITMAP, 
 		windowWidth - 90, windowHeight - 180, LR_LOADFROMFILE);
 	hBackPic = CreateWindowW(L"Static", NULL, WS_VISIBLE | WS_CHILD | SS_BITMAP, 40,
 		50, 100, 100, wnd, NULL, NULL, NULL);
 	SendMessageW(hBackPic, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hBackgroundPic);
+	EnableScrollBar(wnd, SB_BOTH, ESB_ENABLE_BOTH);
 }
 /*
  ****	addMenus	****
  ***********************/
 void ParkingLot::addMenus(HWND hWnd) {
+	screen.GetDesktopResolution(windowWidth, windowHeight);
 
+	buttonWidth = windowWidth / 10, buttonHeight = windowHeight / 27, bottomButton = windowHeight - 200,
+		centerX = (windowWidth / 2 - buttonWidth / 2), centerY = (windowHeight / 2 - buttonHeight / 2) - 100,
+		headingWidth = buttonWidth * 2, headingHeight = buttonHeight * 2, headingCenterX = (windowWidth / 2 - headingWidth / 2);
+	
 	hMenu = CreateMenu();
 
 	AppendMenu(hMenu, MF_STRING, HOME, "Home");							//menu items on top of the screen
@@ -81,6 +88,11 @@ void ParkingLot::addInfo(HWND wndw) {
 			}
 		}										///		end class check
 
+		for (unsigned int i = 0; i < classes->size(); i++)						//get rid of duplicates
+			for (unsigned int j = i; j < classes->size(); j++)
+				if (classes[j] == classes[i])
+					classes[j] = "NULL";
+
 		//insert to student's schedule
 		databaseConnect.insertStatement("Insert into schedule_test values((select ramid from userlogin where username like '"
 			+ (std::string) user + "')," + classes[0] + "," + classes[1] + "," + classes[2]
@@ -132,8 +144,9 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 	DestroyWindow(hPrev);
 	HWND hProfile = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+	EnableScrollBar(hProfile, SB_BOTH, ESB_ENABLE_BOTH);
 	CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		1200, 20, buttonWidth, buttonHeight, hProfile, (HMENU)LOG_IN, NULL, NULL);
+		windowWidth - (windowWidth/6), 20, buttonWidth, buttonHeight, hProfile, (HMENU)LOG_IN, NULL, NULL);
 	CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 		centerX,bottomButton, buttonWidth, buttonHeight, hProfile, (HMENU)STDINFO, NULL, NULL);
 	if (userGroup == "U") {
@@ -173,82 +186,82 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 	}*/
 
 	CreateWindowW(L"Static", L"VEHICLE INFO", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//vehicle info
-		headingCenterX, 27, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
+		headingCenterX, buttonHeight + 2, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
 	hMake = CreateWindowW(L"Edit", profileInfo[0].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 135, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) *5, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 	hModel = CreateWindowW(L"Edit", profileInfo[1].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 108, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2)*4, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 	hPlate = CreateWindowW(L"Edit", profileInfo[2].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 81, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) * 3, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 
 	if (userGroup == "U") {
 		CreateWindowW(L"Static", L"CLASS SCHEDULE", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//Schedule
-			headingCenterX, bottomButton - 361, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
+			headingCenterX, bottomButton - (buttonHeight + 2)*12+10, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Leave blank where no class\n(Enter the CRN)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 307, buttonWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2)*10+10, buttonWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
 
 		CreateWindowW(L"Static", L"CRN", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2)*8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Class Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Start Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"End Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 243, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass1 = CreateWindowW(L"Edit", profileInfo[3].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 216, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[4].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 216, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[5].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 216, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[6].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 216, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass2 = CreateWindowW(L"Edit", profileInfo[7].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 189, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[8].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 189, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[9].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 189, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[10].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 189, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass3 = CreateWindowW(L"Edit", profileInfo[11].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 162, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[12].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 162, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[13].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 162, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[14].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 162, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		
 		hClass4 = CreateWindowW(L"Edit", profileInfo[15].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 135, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[16].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 135, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[17].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 135, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[18].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 135, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass5 = CreateWindowW(L"Edit", profileInfo[19].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 108, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[20].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 108, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[21].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 108, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[22].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 108, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass6 = CreateWindowW(L"Edit", profileInfo[23].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - 81, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[24].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - 81, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[25].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - 81, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[26].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - 81, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 	}
 
 	return hProfile;
@@ -261,43 +274,44 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 	DestroyWindow(hPrev);
 	HWND hSchedule = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 		0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+	EnableScrollBar(hSchedule, SB_BOTH, ESB_ENABLE_BOTH);
 	CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		1200, 20, buttonWidth, buttonHeight, hSchedule, (HMENU)LOG_IN, NULL, NULL);
+		windowHeight - (windowWidth/6), 20, buttonWidth, buttonHeight, hSchedule, (HMENU)LOG_IN, NULL, NULL);
 	CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 		centerX, bottomButton, buttonWidth, buttonHeight, hSchedule, (HMENU)STDINFO, NULL, NULL);
 
 	CreateWindowW(L"Static", L"VEHICLE INFO", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//vehicle info
-		headingCenterX, 27, headingWidth, headingHeight, hSchedule, NULL, NULL, NULL);
+		headingCenterX, (buttonHeight + 2), headingWidth, headingHeight, hSchedule, NULL, NULL, NULL);
 	hMake = CreateWindowW(L"Edit",L"Car Make", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 135, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) * 5, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
 	hModel = CreateWindowW(L"Edit", L"Car Model", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 108, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
 	hPlate = CreateWindowW(L"Edit", L"License Plate", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - 81, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) * 3, buttonWidth, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 	if (userGroup == "U") {
 		CreateWindowW(L"Static", L"CLASS SCHEDULE", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//Schedule
-			headingCenterX, bottomButton - 334, headingWidth, headingHeight, hSchedule, NULL, NULL, NULL);
+			headingCenterX, bottomButton - (buttonHeight + 2) * 11 + 10, headingWidth, headingHeight, hSchedule, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Leave blank where no class\n(Enter the CRN)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 280, buttonWidth, buttonHeight + 35, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 10 + 10, buttonWidth, buttonHeight + 35, hSchedule, NULL, NULL, NULL);
 
 		hClass1 = CreateWindowW(L"Edit", L"Class 1", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 216, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 		hClass2 = CreateWindowW(L"Edit", L"Class 2", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 189, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 		hClass3 = CreateWindowW(L"Edit", L"Class 3", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 162, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 		hClass4 = CreateWindowW(L"Edit", L"Class 4", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 135, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 		hClass5 = CreateWindowW(L"Edit", L"Class 5", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 108, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 
 		hClass6 = CreateWindowW(L"Edit", L"Class 6", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - 81, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
+			centerX, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hSchedule, NULL, NULL, NULL);
 	}
 
 	return hSchedule;
@@ -357,22 +371,23 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 	HWND ParkingLot::registerAccount(HWND hHome) {
 		HWND hRegister = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);							//opens new window
+		EnableScrollBar(hRegister, SB_BOTH, ESB_ENABLE_BOTH);
 		DestroyWindow(hHome);
 
 		CreateWindowW(L"Static", L"REGISTER", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//heading
-			headingCenterX, 27, headingWidth, headingHeight, hRegister, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hRegister, NULL, NULL, NULL);
 		hFirstName = CreateWindowW(L"Edit", L"First Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter first name from screen
-			centerX, centerY - 81, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 3, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
 		hLastName = CreateWindowW(L"Edit", L"Last Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//last name
-			centerX, centerY - 54, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
 		hRam_ID = CreateWindowW(L"Edit", L"RAM ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//ramID
-			centerX, centerY - 27, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 1, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
 		hUserName = CreateWindowW(L"Edit", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//username
 			centerX, centerY, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
 		hPassword = CreateWindowW(L"Edit", L"Create Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, centerY + 27, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
+			centerX, centerY + (buttonHeight + 2) * 1, buttonWidth, buttonHeight, hRegister, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 54, buttonWidth, buttonHeight, hRegister, (HMENU)SIGN_UP, NULL, NULL);		//SIGN_UP case
+			centerX, centerY + (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hRegister, (HMENU)SIGN_UP, NULL, NULL);		//SIGN_UP case
 
 		return hRegister;
 	}
@@ -403,15 +418,16 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hHome);
 		HWND hLogIn = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);				//open new window
+		EnableScrollBar(hLogIn, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"LOG IN", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,				//heading
-			headingCenterX, 27, headingWidth, headingHeight, hLogIn, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hLogIn, NULL, NULL, NULL);
 		hUserName = CreateWindowW(L"Edit", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			centerX, centerY, buttonWidth, buttonHeight, hLogIn, NULL, NULL, NULL);					//enter user name from screen
 		hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, centerY + 27, buttonWidth, buttonHeight, hLogIn, NULL, NULL, NULL);				//password
+			centerX, centerY + (buttonHeight + 2) * 1, buttonWidth, buttonHeight, hLogIn, NULL, NULL, NULL);				//password
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 54, buttonWidth, buttonHeight, hLogIn, HMENU(SIGN_IN), NULL, NULL);		//SIGN_IN case
+			centerX, centerY + (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hLogIn, HMENU(SIGN_IN), NULL, NULL);		//SIGN_IN case
 		return hLogIn;
 	}
 	/*
@@ -445,17 +461,18 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hLotMenu = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hLotMenu, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"STUDENT PARKING LOT MENU", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			headingCenterX, 27, headingWidth, headingHeight, hLotMenu, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hLotMenu, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth -(windowWidth/6), 20, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOG_IN, NULL, NULL);
 		CreateWindowW(L"Button", L"Lot 18", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,					//buttons for each lot 
-			centerX, centerY - 27, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOT18, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 1, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOT18, NULL, NULL);
 		CreateWindowW(L"Button", L"Lot 15", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			centerX, centerY, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOT15, NULL, NULL);
 		CreateWindowW(L"Button", L"View Profile", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 47, buttonWidth, buttonHeight, hLotMenu, (HMENU)PROFILE, NULL, NULL);
+			windowWidth - (windowWidth/6), (buttonHeight + 22) , buttonWidth, buttonHeight, hLotMenu, (HMENU)PROFILE, NULL, NULL);
 
 		return hLotMenu;
 	}
@@ -466,17 +483,18 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hLotMenu = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hLotMenu, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"STAFF PARKING LOT MENU", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			headingCenterX, 27, headingWidth, headingHeight, hLotMenu, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight +2), headingWidth, headingHeight, hLotMenu, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Lot 12", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,					//buttons for each lot 
-			centerX, centerY - 27, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOT12, NULL, NULL);
+			centerX, centerY - buttonHeight+ 2, buttonWidth*1.5, buttonHeight, hLotMenu, (HMENU)LOT12, NULL, NULL);
 		CreateWindowW(L"Button", L"Multiple Spot Request", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, centerY, buttonWidth, buttonHeight, hLotMenu, HMENU(MULTIPLE), NULL, NULL);
+			centerX, centerY, buttonWidth*1.5, buttonHeight, hLotMenu, HMENU(MULTIPLE), NULL, NULL);
 		CreateWindowW(L"Button", L"View Profile", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 47, buttonWidth, buttonHeight, hLotMenu, (HMENU)PROFILE, NULL, NULL);
+			windowWidth -(windowWidth/6), (buttonHeight + 22), buttonWidth, buttonHeight, hLotMenu, (HMENU)PROFILE, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth - (windowWidth / 6), 20, buttonWidth, buttonHeight, hLotMenu, (HMENU)LOG_IN, NULL, NULL);
 
 		return hLotMenu;
 	}
@@ -487,24 +505,25 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hMoreSpots = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hMoreSpots, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"Multiple Spot Request", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			headingCenterX, 27, headingWidth, headingHeight, hMoreSpots, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hMoreSpots, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hMoreSpots, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth - (windowWidth / 6), 20, buttonWidth, buttonHeight, hMoreSpots, (HMENU)LOG_IN, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hMoreSpots, (HMENU)STFLOTMENU, NULL, NULL);
 
 		hLot = CreateWindowW(L"Edit", L"Lot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter first name from screen
-			centerX, centerY - 108, buttonWidth, buttonHeight, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - ( 2) * 4, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		hDate = CreateWindowW(L"Edit", L"Date of Event(YYYY-MM-DD)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//last name
-			centerX, centerY - 81, buttonWidth, buttonHeight * 2, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - ( 2) * 3, buttonWidth + buttonHeight, buttonHeight * 2, hMoreSpots, NULL, NULL, NULL);
 		hSpots = CreateWindowW(L"Edit", L"Number of Spots", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//ramID
-			centerX, centerY - 27, buttonWidth, buttonHeight, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - ( 2) * 1, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		hEvent = CreateWindowW(L"Edit", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//username
-			centerX, centerY, buttonWidth, buttonHeight, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 54, buttonWidth, buttonHeight, hMoreSpots, (HMENU)MORE, NULL, NULL);
+			centerX, centerY + ( 2) * 2, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, (HMENU)MORE, NULL, NULL);
 
 		return hMoreSpots;
 	}
@@ -591,6 +610,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hLot12 = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hLot12, SB_BOTH, ESB_ENABLE_BOTH);
 		int numOfSpots = 20;
 		lotName = "Lot03";
 
@@ -599,33 +619,34 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		int reservedSpot = databaseConnect.getSpotNumber("Select spotnumber from " + lotName + " where ramID = (select ramid from userlogin where username = '"
 			+ (std::string)user + "')");
 
-		CreateWindowW(L"Static", L"Staff Lot 15", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			20, 20, buttonWidth, buttonHeight, hLot12, NULL, NULL, NULL);
-		CreateWindowW(L"Static", L"Spot Reservation", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			20, 360, buttonWidth, buttonHeight, hLot12, NULL, NULL, NULL);
-		hSpotNumber = CreateWindowW(L"Edit", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter spot number from screen
-			20, 400, buttonWidth, buttonHeight, hLot12, NULL, NULL, NULL);
+
+		CreateWindowW(L"Static", L"Priority Lot 18", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
+			20, 20, buttonWidth, buttonHeight * 2, hLot12, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hLot12, (HMENU)STFLOTMENU, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hLot12, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth - (windowWidth / 6), 20, buttonWidth, buttonHeight, hLot12, (HMENU)LOG_IN, NULL, NULL);
+		CreateWindowW(L"Static", L"Enter desired spot below to reserve/release", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			20, buttonHeight*3, buttonWidth, buttonHeight*2, hLot12, NULL, NULL, NULL);
+		hSpotNumber = CreateWindowW(L"Edit", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter spot number from screen
+			20, bottomButton - (buttonHeight + 2) * 5, buttonWidth, buttonHeight, hLot12, NULL, NULL, NULL);
 
 		if (reservedSpot > 0) {				//user already has a spot
 			CreateWindowW(L"Button", L"Release Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//can release spot
-				20, 540, buttonWidth, buttonHeight, hLot12, (HMENU)RELEASE, NULL, NULL);
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot12, (HMENU)RELEASE, NULL, NULL);
 			CreateWindowW(L"Button", L"Spot Taken?", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 590, buttonWidth, buttonHeight, hLot12, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
+				20, bottomButton - (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hLot12, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
 
 			wchar_t isSpot[256];
 			wsprintfW(isSpot, L"%d", reservedSpot);
 			std::wstring spotIsReserved = widen("You have this spot number reserved: ") + isSpot;
 
 			CreateWindowW(L"Static", spotIsReserved.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 280, buttonWidth, buttonHeight * 2, hLot12, NULL, NULL, NULL);
+				20, (buttonHeight + 2) * 5, buttonWidth, buttonHeight * 2, hLot12, NULL, NULL, NULL);
 		}
 		else {								//user does not have a spot
 			CreateWindowW(L"Button", L"Reserve Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 440, buttonWidth, buttonHeight, hLot12, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot12, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
 		}
 
 		for (int k = 1; k <= 4; k++) {
@@ -652,6 +673,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hLot18 = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hLot18, SB_BOTH, ESB_ENABLE_BOTH);
 		int numOfSpots = 20;
 		lotName = "Lot01";
 
@@ -662,32 +684,32 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			+ (std::string)user + "')");
 
 		CreateWindowW(L"Static", L"Priority Lot 18", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			20, 20, buttonWidth, buttonHeight, hLot18, NULL, NULL, NULL);
+			20, 20, buttonWidth, buttonHeight*2, hLot18, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hLot18, (HMENU)STDLOTMENU, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hLot18, (HMENU)LOG_IN, NULL, NULL);
-		CreateWindowW(L"Static", L"Spot Reservation", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		
-			20, 360, buttonWidth, buttonHeight, hLot18, NULL, NULL, NULL);
+			windowWidth - (windowWidth/6), 20, buttonWidth, buttonHeight, hLot18, (HMENU)LOG_IN, NULL, NULL);
+		CreateWindowW(L"Static", L"Enter desired spot below to reserve/release", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		
+			20, buttonHeight*3, buttonWidth, buttonHeight*2, hLot18, NULL, NULL, NULL);
 		hSpotNumber = CreateWindowW(L"Edit", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter spot number from screen
-			20, 400, buttonWidth, buttonHeight, hLot18, NULL, NULL, NULL);
+			20, bottomButton - (buttonHeight + 2) * 5, buttonWidth, buttonHeight, hLot18, NULL, NULL, NULL);
 
 		if (reservedSpot > 0) {				//user already has a spot
 			CreateWindowW(L"Button", L"Release Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//can release spot
-				20, 540, buttonWidth, buttonHeight, hLot18, (HMENU)RELEASE, NULL, NULL);
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot18, (HMENU)RELEASE, NULL, NULL);
 			CreateWindowW(L"Button", L"Spot Taken?", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 590, buttonWidth, buttonHeight, hLot18, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
+				20, bottomButton - (buttonHeight +2) *2, buttonWidth, buttonHeight, hLot18, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
 
 			wchar_t isSpot[256];
 			wsprintfW(isSpot, L"%d", reservedSpot);
 			std::wstring spotIsReserved = widen("You have this spot number reserved: ") + isSpot;
 
 			CreateWindowW(L"Static", spotIsReserved.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 280, buttonWidth, buttonHeight * 2, hLot18, NULL, NULL, NULL);
+				20, (buttonHeight + 2) * 5, buttonWidth, buttonHeight * 2, hLot18, NULL, NULL, NULL);
 		}
 		else {								//user does not have a spot
 			CreateWindowW(L"Button", L"Reserve Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 440, buttonWidth, buttonHeight, hLot18, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot18, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
 		}
 
 		for (int i = 1; i <= numOfSpots; i++) {
@@ -697,10 +719,10 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 							//displays first horizontal row
 			if (lot18Spots[i - 1] != "N")						//spot availible show number
 				CreateWindowW(L"Static", spot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				(i * 40) + 260, 30, buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
+				(i * 40) + 260, buttonHeight*2 +5, buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
 			else																		//spot not availible dont show number
 				CreateWindowW(L"Static", L"", COLOR_WINDOW | WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				(i * 40) + 260, 30, buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
+				(i * 40) + 260, buttonHeight*2 + 5, buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
 		}
 		for (int i = 1; i <= 5; i++) {
 			for (int j = 1; j <= 25; j++) {
@@ -711,10 +733,10 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 					//displays vertical rows
 				if (lot18Spots[num - 1] != "N")								//spot availible show number
 					CreateWindowW(L"Static", spot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(i * 200) + 100, 50 + (j * 25), buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
+					(i * 200) + 100, buttonHeight*3 + 5 + (j * 25), buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
 				else																		//spot not availible dont show number
 					CreateWindowW(L"Static", L"", COLOR_WINDOW | WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(i * 200) + 100, 50 + (j * 25), buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
+					(i * 200) + 100, buttonHeight*3 + 5 + (j * 25), buttonHeight, buttonHeight, hLot18, NULL, NULL, NULL);
 			}
 		}
 		return hLot18;
@@ -726,6 +748,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hLot15 = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hLot15, SB_BOTH, ESB_ENABLE_BOTH);
 		int numOfSpots = 30;
 		lotName = "Lot02";
 
@@ -735,32 +758,32 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			+ (std::string)user + "')");
 
 		CreateWindowW(L"Static", L"Non Priority Lot 15", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			20, 20, buttonWidth, buttonHeight, hLot15, NULL, NULL, NULL);
-		CreateWindowW(L"Static", L"Spot Reservation", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,	
-			20, 360, buttonWidth, buttonHeight, hLot15, NULL, NULL, NULL);
-		hSpotNumber = CreateWindowW(L"Edit", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter spot number from screen
-			20, 400, buttonWidth, buttonHeight, hLot15, NULL, NULL, NULL);
+			20, 20, buttonWidth, buttonHeight * 2, hLot15, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hLot15, (HMENU)STDLOTMENU, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hLot15, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth - (windowWidth / 6), 20, buttonWidth, buttonHeight, hLot15, (HMENU)LOG_IN, NULL, NULL);
+		CreateWindowW(L"Static", L"Enter desired spot below to reserve/release", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			20, buttonHeight*3, buttonWidth, buttonHeight*2, hLot15, NULL, NULL, NULL);
+		hSpotNumber = CreateWindowW(L"Edit", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter spot number from screen
+			20, bottomButton - (buttonHeight + 2) * 5, buttonWidth, buttonHeight, hLot15, NULL, NULL, NULL);
 
 		if (reservedSpot > 0) {				//user already has a spot
 			CreateWindowW(L"Button", L"Release Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//can release spot
-				20, 540, buttonWidth, buttonHeight, hLot15, (HMENU)RELEASE, NULL, NULL);
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot15, (HMENU)RELEASE, NULL, NULL);
 			CreateWindowW(L"Button", L"Spot Taken?", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 590, buttonWidth, buttonHeight, hLot15, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
+				20, bottomButton - (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hLot15, (HMENU)TAKEN, NULL, NULL);					//can report spot taken
 
 			wchar_t isSpot[256];
 			wsprintfW(isSpot, L"%d", reservedSpot);
 			std::wstring spotIsReserved = widen("You have this spot number reserved: ") + isSpot;
 
 			CreateWindowW(L"Static", spotIsReserved.c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 280, buttonWidth, buttonHeight * 2, hLot15, NULL, NULL, NULL);
+				20, (buttonHeight + 2) * 5, buttonWidth, buttonHeight * 2, hLot15, NULL, NULL, NULL);
 		}
 		else {								//user does not have a spot
 			CreateWindowW(L"Button", L"Reserve Spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				20, 440, buttonWidth, buttonHeight, hLot15, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
+				20, bottomButton - (buttonHeight + 2) * 4, buttonWidth, buttonHeight, hLot15, (HMENU)RESERVE, NULL, NULL);			// can reservse spot
 		}
 
 		for (int k = 1; k <= 2; k++) {
@@ -770,15 +793,15 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 				wsprintfW(spot, L"%d", num);				//generates spot number
 
 				CreateWindowW(L"Static", spot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//displays horizontal rows
-					(i * 40) + 150, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
+					(i * 40) + 125, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
 
 				//displays vertical rows
 				if (lot15Spots[num - 1] != "N")								//spot availible show number
 					CreateWindowW(L"Static", spot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,//displays horizontal rows
-					(i * 40) + 150, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
+					(i * 40) + 125, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
 				else																		//spot not availible dont show number
 					CreateWindowW(L"Static", L"", COLOR_WINDOW | WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,//displays horizontal rows
-					(i * 40) + 150, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
+					(i * 40) + 125, (100 * k) + 200, buttonHeight, buttonHeight, hLot15, NULL, NULL, NULL);
 			}
 		}
 		return hLot15;
@@ -831,13 +854,9 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 					databaseConnect.getStartOfClasses((std::string)user, classTimes);
 
-					for (unsigned int i = 0; i < classTimes.size(); i++) {
-						std::cout << classTimes[i] << std::endl;
-
-						if (classTimes[i] < plus && classTimes[i] > timeRN) {
+					for (unsigned int i = 0; i < classTimes.size(); i++) 
+						if (classTimes[i] < plus && classTimes[i] > timeRN) 
 							hasClass = true;
-						}
-					}
 
 					if (hasClass != true) {
 						MessageBoxW(hReserve, L"You can not reserve a spot if you do not have a class with in the 15 min", L"Reservation", MB_OK);
@@ -913,15 +932,16 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hAdmin = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);				//open new window
+		EnableScrollBar(hAdmin, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"ADMINISTRATOR", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,				//heading
-			headingCenterX, 27, headingWidth, headingHeight, hAdmin, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hAdmin, NULL, NULL, NULL);
 		hUserName = CreateWindowW(L"Edit", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			centerX, centerY, buttonWidth, buttonHeight, hAdmin, NULL, NULL, NULL);					//enter user name from screen
 		hPassword = CreateWindowW(L"Edit", L"Password", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
-			centerX, centerY + 27, buttonWidth, buttonHeight, hAdmin, NULL, NULL, NULL);				//password
+			centerX, centerY + (buttonHeight + 2) * 1, buttonWidth, buttonHeight, hAdmin, NULL, NULL, NULL);				//password
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 54, buttonWidth, buttonHeight, hAdmin, HMENU(ADMINOPTS), NULL, NULL);		//SIGN_IN case
+			centerX, centerY + (buttonHeight + 2) * 2, buttonWidth, buttonHeight, hAdmin, HMENU(ADMINOPTS), NULL, NULL);		//SIGN_IN case
 		
 		return hAdmin;
 	}
@@ -948,15 +968,16 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hAdminMenu = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+		EnableScrollBar(hAdminMenu, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"ADMIN MENU", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
-			headingCenterX, 27, headingWidth, headingHeight, hAdminMenu, NULL, NULL, NULL);
+			headingCenterX, (buttonHeight + 2) * 1, headingWidth, headingHeight, hAdminMenu, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Pending Reports", WS_VISIBLE | WS_CHILD,
-			centerX, centerY - 27, buttonWidth, buttonHeight, hAdminMenu, (HMENU)REPORT, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 1, buttonWidth*1.5, buttonHeight, hAdminMenu, (HMENU)REPORT, NULL, NULL);
 		CreateWindowW(L"Button", L"View Reservations", WS_VISIBLE | WS_CHILD,
-			centerX, centerY, buttonWidth, buttonHeight, hAdminMenu, (HMENU)VIEW, NULL, NULL);
+			centerX, centerY, buttonWidth *1.5, buttonHeight, hAdminMenu, (HMENU)VIEW, NULL, NULL);
 		CreateWindowW(L"Button", L"Pending Requests", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + 27, buttonWidth, buttonHeight, hAdminMenu, (HMENU)REQUEST, NULL, NULL);
+			centerX, centerY + (buttonHeight + 2) * 1, buttonWidth*1.5, buttonHeight, hAdminMenu, (HMENU)REQUEST, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			1200, 20, buttonWidth, buttonHeight, hAdminMenu, (HMENU)ADMIN, NULL, NULL);
 
@@ -970,27 +991,29 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+		EnableScrollBar(reserveView, SB_BOTH, ESB_ENABLE_BOTH);
 		std::string allLots[] = { "Lot01", "Lot02", "Lot03" };
 
 		CreateWindowW(L"Static", L"Reservations", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, 20, buttonWidth, buttonHeight, reserveView, HMENU(), NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
+			windowWidth - (windowWidth/6), 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, reserveView, HMENU(ADMINMENU), NULL, NULL);
 
 		CreateWindowW(L"Static", L"Reservation ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				pushOver, (buttonHeight + 2) * 1, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			buttonWidth + horizonatalMargin + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2)  * 1, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Lot Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2)  * 1, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Spot Number", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2)  * 1, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"License Plate", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * 1, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 
 		std::vector<std::wstring> thisLot;
+		int reserveID = 1;
 
 		for (int c = 0; c < 3; c++) {
 			std::vector<int> spot;
@@ -1001,26 +1024,25 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			thisLot.push_back(widen(allLots[c]));
 
 			for (unsigned int k = 0; k < name.size(); k++) {
-				std::cout << allLots[c] + '\t' + std::to_string(spot[k]) + '\t' + name[k] + '\t' + plate[k] << std::endl;
-
+				reserveID++;
 				wchar_t isReserved[256], isSpot[256];
 
 				thisName.push_back(widen(name[k]));
 				thisPlate.push_back(widen(plate[k]));
 
 				wsprintfW(isSpot, L"%d", spot[k]);
-				wsprintfW(isReserved, L"%d", k * c + 1);
+				wsprintfW(isReserved, L"%d", reserveID - 1);
 
 				CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					pushOver, reserveID * (buttonHeight+2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisName[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					buttonWidth + horizonatalMargin + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					buttonWidth + horizonatalMargin + pushOver, reserveID * (buttonHeight + 2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisLot[c].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 2 + pushOver, reserveID * (buttonHeight + 2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", isSpot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k * c+ 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 3 + pushOver, reserveID * (buttonHeight + 2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisPlate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k * c + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 4 + pushOver, reserveID * (buttonHeight+2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			}
 		}
 		return reserveView;
@@ -1033,28 +1055,29 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+		EnableScrollBar(reserveView, SB_BOTH, ESB_ENABLE_BOTH);
 		std::vector<int> spots;
 		std::vector<std::string> name, lot, date, event;
 
 		CreateWindowW(L"Static", L"Pending Requests", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, 20, buttonWidth, buttonHeight, reserveView, HMENU(), NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
+			windowWidth -(windowWidth/6), 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, reserveView, (HMENU)ADMINMENU, NULL, NULL);
 
 		CreateWindowW(L"Static", L"Request ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			pushOver, (buttonHeight +2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			buttonWidth + horizonatalMargin + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Lot Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Number Spots", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Event Date", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 5 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 
 		databaseConnect.getRequests(name, lot, event, date, spots);
 		std::vector<std::wstring> thisName, thisEvent, thisLot, thisDate;
@@ -1070,17 +1093,17 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 				wsprintfW(isReserved, L"%d", k + 1);
 
 				CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisName[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					buttonWidth + horizonatalMargin + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisLot[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", aSpot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisEvent[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisDate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-					(buttonWidth + horizonatalMargin) * 5 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+					(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			}
 		return reserveView;
 	}
@@ -1092,26 +1115,27 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+		EnableScrollBar(reserveView, SB_BOTH, ESB_ENABLE_BOTH);
 		std::vector<int> spot;
 		std::vector<std::string> name, plate, lot, lcnsPlt;
 
 		CreateWindowW(L"Static", L"Pending Reports", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, 20, buttonWidth, buttonHeight, reserveView, HMENU(), NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
+			windowWidth -(windowWidth/6), 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, reserveView, (HMENU)ADMINMENU, NULL, NULL);
 
 		CreateWindowW(L"Static", L"Report ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			buttonWidth + horizonatalMargin + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Lot Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Spot Taken", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"License Plate", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 
 		databaseConnect.getReports(name, lot, spot, lcnsPlt);
 		std::vector<std::wstring> thisName, thisPlate, thisLot;
@@ -1126,15 +1150,15 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			wsprintfW(isReserved, L"%d", k + 1);
 
 			CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			CreateWindowW(L"Static", thisName[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				buttonWidth + horizonatalMargin + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			CreateWindowW(L"Static", thisLot[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				(buttonWidth + horizonatalMargin) * 2 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			CreateWindowW(L"Static", isSpot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				(buttonWidth + horizonatalMargin) * 3 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			CreateWindowW(L"Static", thisPlate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-				(buttonWidth + horizonatalMargin) * 4 + pushOver, 27 * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		}
 		return reserveView;
 	}
@@ -1145,13 +1169,14 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		DestroyWindow(hPrev);
 		HWND hTaken = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);			//opens new window
+		EnableScrollBar(hTaken, SB_BOTH, ESB_ENABLE_BOTH);
 
 		CreateWindowW(L"Static", L"Stolen Spot Report", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
 			headingCenterX, 20, headingWidth, headingHeight, hTaken, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back to Parking Lot Menu", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth + (buttonHeight * 2), buttonHeight, hTaken, (HMENU)STDLOTMENU, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			1200, 20, buttonWidth, buttonHeight, hTaken, (HMENU)LOG_IN, NULL, NULL);
+			windowWidth - (windowWidth/6), 20, buttonWidth, buttonHeight, hTaken, (HMENU)LOG_IN, NULL, NULL);
 
 		int stolenSpot = databaseConnect.getSpotNumber("select spotnumber from "
 			+ lotName + " where username = '" + (std::string) user + "'");
@@ -1160,7 +1185,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			centerX, centerY, buttonWidth, buttonHeight * 3, hTaken, NULL, NULL, NULL);
 
 		CreateWindowW(L"Button", L"Send Report and Get New Spot", WS_VISIBLE | WS_CHILD | SS_CENTER,
-			centerX - buttonHeight * 2, centerY + 81, buttonWidth + buttonHeight * 3, buttonHeight, hTaken, HMENU(SEND), NULL, NULL);
+			centerX - buttonHeight * 2, centerY + (buttonHeight +2) * 3, buttonWidth + buttonHeight * 3, buttonHeight, hTaken, HMENU(SEND), NULL, NULL);
 		return hTaken;
 	}
 	/*
