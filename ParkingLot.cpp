@@ -620,7 +620,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			+ (std::string)user + "')");
 
 
-		CreateWindowW(L"Static", L"Priority Lot 18", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
+		CreateWindowW(L"Static", Staff Lot 12", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
 			20, 20, buttonWidth, buttonHeight * 2, hLot12, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hLot12, (HMENU)STFLOTMENU, NULL, NULL);
