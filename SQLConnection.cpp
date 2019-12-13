@@ -899,7 +899,7 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 	std::string SQLQuery;
 
 	if (GroupOfUser == "U")
-		SQLQuery = "select CarMake, CarModel, LicensePlateNum, class1, (select class_name from course where crn = class1), convert(varchar, (select start_time from course where crn = class1), 8),convert(varchar,(select end_time from course where crn = class1), 8),class2, (select class_name from course where crn = class2), convert(varchar, (select start_time from course where crn = class2), 8),convert(varchar,(select end_time from course where crn = class2),8),class3, (select class_name from course where crn = class3), convert(varchar,(select start_time from course where crn = class3),8), convert(varchar,(select end_time from course where crn = class3),8),class4, (select class_name from course where crn = class4), convert(varchar, (select start_time from course where crn = class4), 8), convert(varchar,(select end_time from course where crn = class4),8), class5, (select class_name from course where crn = class5), convert(varchar, (select start_time from course where crn = class5), 8), convert(varchar, (select end_time from course where crn = class5), 8), class6, (select class_name from course where crn = class6), convert(varchar, (select start_time from course where crn = class6), 8),convert(varchar,(select end_time from course where crn = class6),8) from Permit join UserLogin on ParkingPermit = PermitNumber join schedule_test on schedule_test.ramID = UserLogin.RamID where username = '" + usr + "'";
+		SQLQuery = "select CarMake, CarModel, LicensePlateNum, class1, (select class_name from course where crn = class1), convert(varchar, (select start_time from course where crn = class1), 0),convert(varchar,(select end_time from course where crn = class1), 0), (select class_day from course where crn = class1), class2, (select class_name from course where crn = class2), convert(varchar, (select start_time from course where crn = class2), 0),convert(varchar,(select end_time from course where crn = class2),0), (select class_day from course where crn = class2), class3, (select class_name from course where crn = class3), convert(varchar,(select start_time from course where crn = class3),0), convert(varchar,(select end_time from course where crn = class3),0),(select class_day from course where crn = class3), class4, (select class_name from course where crn = class4), convert(varchar, (select start_time from course where crn = class4), 0), convert(varchar,(select end_time from course where crn = class4),0), (select class_day from course where crn = class4), class5, (select class_name from course where crn = class5), convert(varchar, (select start_time from course where crn = class5), 0), convert(varchar, (select end_time from course where crn = class5), 0), (select class_day from course where crn  = class5), class6, (select class_name from course where crn = class6), convert(varchar, (select start_time from course where crn = class6), 0),convert(varchar,(select end_time from course where crn = class6),0), (select class_day from course where crn = class6) from Permit join UserLogin on ParkingPermit = PermitNumber join schedule_test on schedule_test.ramID = UserLogin.RamID where username = '" + usr + "'";
 	else
 		SQLQuery = "select CarMake,CarModel,LicensePlateNum from Permit join UserLogin on ParkingPermit = PermitNumber where UserLogin.UserName = '" + usr + "'";
 
@@ -956,11 +956,12 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 			break;
 		}
 		else {
-			char carMk[256], crMdel[256], pltNmbr[256], clss1[256], clss2[256], 
-				clss3[256], clss4[256], clss5[256], clss6[256], class1Name[256], class2Name[256],
-				class3Name[256], class4Name[256], class5Name[256], class6Name[256], class1Start[256], class2Start[256],
-				class3Start[256], class4Start[256], class5Start[256], class6Start[256], class1End[256], class2End[256],
-				class3End[256], class4End[256], class5End[256], class6End[256];
+			char carMk[256], crMdel[256], pltNmbr[256], 
+				clss1[256], clss2[256], clss3[256], clss4[256], clss5[256], clss6[256], 
+				class1Name[256], class2Name[256], class3Name[256], class4Name[256], class5Name[256], class6Name[256], 
+				class1Start[256], class2Start[256], class3Start[256], class4Start[256], class5Start[256], class6Start[256], 
+				class1End[256], class2End[256], class3End[256], class4End[256], class5End[256], class6End[256],
+				class1Day[256], class2Day[256], class3Day[256], class4Day[256], class5Day[256], class6Day[256];
 
 			carMk[0] = '\0';
 			crMdel[0] = '\0';
@@ -989,6 +990,12 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 			class4End[0] = '\0';
 			class5End[0] = '\0';
 			class6End[0] = '\0';
+			class1Day[0] = '\0';
+			class2Day[0] = '\0';
+			class3Day[0] = '\0';
+			class4Day[0] = '\0';
+			class5Day[0] = '\0';
+			class6Day[0] = '\0';
 
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 				// Fetches the next rowset of data from the result
@@ -1001,24 +1008,34 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 				SQLGetData(SQLStatementHandle, 7, SQL_C_DEFAULT, &clss4, sizeof(clss4), NULL);
 				SQLGetData(SQLStatementHandle, 8, SQL_C_DEFAULT, &clss5, sizeof(clss5), NULL);
 				SQLGetData(SQLStatementHandle, 9, SQL_C_DEFAULT, &clss6, sizeof(clss6), NULL);
+
 				SQLGetData(SQLStatementHandle, 10, SQL_C_DEFAULT, &class1Name, sizeof(class1Name), NULL);
 				SQLGetData(SQLStatementHandle, 11, SQL_C_DEFAULT, &class2Name, sizeof(class2Name), NULL);
 				SQLGetData(SQLStatementHandle, 12, SQL_C_DEFAULT, &class3Name, sizeof(class3Name), NULL);
 				SQLGetData(SQLStatementHandle, 13, SQL_C_DEFAULT, &class4Name, sizeof(class4Name), NULL);
 				SQLGetData(SQLStatementHandle, 14, SQL_C_DEFAULT, &class5Name, sizeof(class5Name), NULL);
 				SQLGetData(SQLStatementHandle, 15, SQL_C_DEFAULT, &class6Name, sizeof(class6Name), NULL);
+
 				SQLGetData(SQLStatementHandle, 16, SQL_C_DEFAULT, &class1Start, sizeof(class1Start), NULL);
 				SQLGetData(SQLStatementHandle, 17, SQL_C_DEFAULT, &class2Start, sizeof(class2Start), NULL);
 				SQLGetData(SQLStatementHandle, 18, SQL_C_DEFAULT, &class3Start, sizeof(class3Start), NULL);
 				SQLGetData(SQLStatementHandle, 19, SQL_C_DEFAULT, &class4Start, sizeof(class4Start), NULL);
 				SQLGetData(SQLStatementHandle, 20, SQL_C_DEFAULT, &class5Start, sizeof(class5Start), NULL);
 				SQLGetData(SQLStatementHandle, 21, SQL_C_DEFAULT, &class6Start, sizeof(class6Start), NULL);
+
 				SQLGetData(SQLStatementHandle, 22, SQL_C_DEFAULT, &class1End, sizeof(class1End), NULL);
 				SQLGetData(SQLStatementHandle, 23, SQL_C_DEFAULT, &class2End, sizeof(class2End), NULL);
 				SQLGetData(SQLStatementHandle, 24, SQL_C_DEFAULT, &class3End, sizeof(class3End), NULL);
 				SQLGetData(SQLStatementHandle, 25, SQL_C_DEFAULT, &class4End, sizeof(class4End), NULL);
 				SQLGetData(SQLStatementHandle, 26, SQL_C_DEFAULT, &class5End, sizeof(class5End), NULL);
 				SQLGetData(SQLStatementHandle, 27, SQL_C_DEFAULT, &class6End, sizeof(class6End), NULL);
+
+				SQLGetData(SQLStatementHandle, 28, SQL_C_DEFAULT, &class1Day, sizeof(class1Day), NULL);
+				SQLGetData(SQLStatementHandle, 29, SQL_C_DEFAULT, &class2Day, sizeof(class2Day), NULL);
+				SQLGetData(SQLStatementHandle, 30, SQL_C_DEFAULT, &class3Day, sizeof(class3Day), NULL);
+				SQLGetData(SQLStatementHandle, 31, SQL_C_DEFAULT, &class4Day, sizeof(class4Day), NULL);
+				SQLGetData(SQLStatementHandle, 32, SQL_C_DEFAULT, &class5Day, sizeof(class5Day), NULL);
+				SQLGetData(SQLStatementHandle, 33, SQL_C_DEFAULT, &class6Day, sizeof(class6Day), NULL);
 
 				prflVctr.push_back((std::string)carMk);
 				prflVctr.push_back((std::string)crMdel);
@@ -1029,29 +1046,37 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 				prflVctr.push_back((std::string)clss4);
 				prflVctr.push_back((std::string)clss5);
 				prflVctr.push_back((std::string)clss6);
+
 				prflVctr.push_back((std::string)class1Name);
 				prflVctr.push_back((std::string)class2Name);
 				prflVctr.push_back((std::string)class3Name);
 				prflVctr.push_back((std::string)class4Name);
 				prflVctr.push_back((std::string)class5Name);
 				prflVctr.push_back((std::string)class6Name);
+
 				prflVctr.push_back((std::string)class1Start);
 				prflVctr.push_back((std::string)class2Start);
 				prflVctr.push_back((std::string)class3Start);
 				prflVctr.push_back((std::string)class4Start);
 				prflVctr.push_back((std::string)class5Start);
 				prflVctr.push_back((std::string)class6Start);
+
 				prflVctr.push_back((std::string)class1End);
 				prflVctr.push_back((std::string)class2End);
 				prflVctr.push_back((std::string)class3End);
 				prflVctr.push_back((std::string)class4End);
 				prflVctr.push_back((std::string)class5End);
 				prflVctr.push_back((std::string)class6End);
+
+				prflVctr.push_back((std::string)class1Day);
+				prflVctr.push_back((std::string)class2Day);
+				prflVctr.push_back((std::string)class3Day);
+				prflVctr.push_back((std::string)class4Day);
+				prflVctr.push_back((std::string)class5Day);
+				prflVctr.push_back((std::string)class6Day);
 			}
 		}
 	} while (FALSE);
-
-
 
 	SQLFreeHandle(SQL_HANDLE_STMT, SQLStatementHandle);
 	SQLDisconnect(SQLConnectionHandle);
@@ -1063,7 +1088,7 @@ void ConnectToDB::getStartOfClasses(std::string usr, std::vector<std::string>& c
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
-	std::string SQLQuery = "select convert(varchar(50),(select start_time from course where crn = class1),8),convert(varchar(50), (select start_time from course where crn = class2), 8),convert(varchar(50), (select start_time from course where crn = class3), 8),		convert(varchar(50), (select start_time from course where crn = class4), 8),		convert(varchar(50), (select start_time from course where crn = class5), 8),		convert(varchar(50), (select start_time from course where crn = class6), 8)		from Permit		join UserLogin on ParkingPermit = PermitNumber		join schedule_test on schedule_test.ramID = UserLogin.RamID where username = '" + usr + "'";
+	std::string SQLQuery = "select convert(varchar(50),(select start_time from course where crn = class1),8),convert(varchar(50), (select start_time from course where crn = class2), 8),convert(varchar(50), (select start_time from course where crn = class3), 8),convert(varchar(50), (select start_time from course where crn = class4), 8),convert(varchar(50), (select start_time from course where crn = class5), 8), convert(varchar(50), (select start_time from course where crn = class6), 8), (select class_day from course where crn  = class1),(select class_day from course where crn  = class2),(select class_day from course where crn  = class3),(select class_day from course where crn  = class4),(select class_day from course where crn  = class5),(select class_day from course where crn  = class6)		from Permit		join UserLogin on ParkingPermit = PermitNumber		join schedule_test on schedule_test.ramID = UserLogin.RamID where username = '" + usr + "'";
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -1118,8 +1143,10 @@ void ConnectToDB::getStartOfClasses(std::string usr, std::vector<std::string>& c
 			break;
 		}
 		else {
-			char class1Start[256], class2Start[256],
-				class3Start[256], class4Start[256], class5Start[256], class6Start[256];
+			char class1Start[256], class2Start[256], class3Start[256],
+				class4Start[256], class5Start[256], class6Start[256],
+				class1Day[256], class2Day[256], class3Day[256],
+				class4Day[256], class5Day[256], class6Day[256];
 
 			class1Start[0] = '\0';
 			class2Start[0] = '\0';
@@ -1127,6 +1154,12 @@ void ConnectToDB::getStartOfClasses(std::string usr, std::vector<std::string>& c
 			class4Start[0] = '\0';
 			class5Start[0] = '\0';
 			class6Start[0] = '\0';
+			class1Day[0] = '\0';
+			class2Day[0] = '\0';
+			class3Day[0] = '\0';
+			class4Day[0] = '\0';
+			class4Day[0] = '\0';
+			class6Day[0] = '\0';
 
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 				// Fetches the next rowset of data from the result
@@ -1136,6 +1169,12 @@ void ConnectToDB::getStartOfClasses(std::string usr, std::vector<std::string>& c
 				SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &class4Start, sizeof(class4Start), NULL);
 				SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &class5Start, sizeof(class5Start), NULL);
 				SQLGetData(SQLStatementHandle, 6, SQL_C_DEFAULT, &class6Start, sizeof(class6Start), NULL);
+				SQLGetData(SQLStatementHandle, 7, SQL_C_DEFAULT, &class1Day, sizeof(class1Day), NULL);
+				SQLGetData(SQLStatementHandle, 8, SQL_C_DEFAULT, &class2Day, sizeof(class2Day), NULL);
+				SQLGetData(SQLStatementHandle, 9, SQL_C_DEFAULT, &class3Day, sizeof(class3Day), NULL);
+				SQLGetData(SQLStatementHandle, 10, SQL_C_DEFAULT, &class4Day, sizeof(class4Day), NULL);
+				SQLGetData(SQLStatementHandle, 11, SQL_C_DEFAULT, &class5Day, sizeof(class5Day), NULL);
+				SQLGetData(SQLStatementHandle, 12, SQL_C_DEFAULT, &class6Day, sizeof(class6Day), NULL);
 
 				classVctr.push_back((std::string)class1Start);
 				classVctr.push_back((std::string)class2Start);
@@ -1143,6 +1182,12 @@ void ConnectToDB::getStartOfClasses(std::string usr, std::vector<std::string>& c
 				classVctr.push_back((std::string)class4Start);
 				classVctr.push_back((std::string)class5Start);
 				classVctr.push_back((std::string)class6Start);
+				classVctr.push_back((std::string)class1Day);
+				classVctr.push_back((std::string)class2Day);
+				classVctr.push_back((std::string)class3Day);
+				classVctr.push_back((std::string)class4Day);
+				classVctr.push_back((std::string)class5Day);
+				classVctr.push_back((std::string)class6Day);
 			}
 		}
 	} while (FALSE);

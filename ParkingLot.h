@@ -19,7 +19,8 @@ private:
 	std::wstring widen(const std::string&);
 
 	std::string getCurrentTime();
-	std::string getCurrentTimePlus();
+	std::string getCurrentTimePlus(int);
+	std::string getWeekDay();
 
 
 	std::string userGroup, lotName;

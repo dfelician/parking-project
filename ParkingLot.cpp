@@ -158,20 +158,19 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 			20, bottomButton, buttonWidth, buttonHeight, hProfile, (HMENU)STFLOTMENU, NULL, NULL);
 	}
 
-	int xPos = centerX/1.7, secondColumnMargin = buttonWidth + 10,
-		thirdColumnMargin = secondColumnMargin * 2, fourthColumnMargin = secondColumnMargin * 3;
+	int xPos = centerX/2, secondColumnMargin = buttonWidth + 10,thirdColumnMargin = secondColumnMargin * 2, 
+		fourthColumnMargin = secondColumnMargin * 3, fifthColumnMargin = secondColumnMargin * 4;
 	//HWND hProfile[] = {hMake, hModel, hPlate, hClass1, hClass2, hClass3, hClass4, hClass5, hClass6};
 
 	std::vector<std::string> profile;
-	std::wstring profileInfo[27];
+	std::vector<std::wstring> profileInfo;
 
 	databaseConnect.getProfile((std::string)user, profile, userGroup);
-
 
 	for (unsigned int i = 0; i < profile.size(); i++) {
 		if (profile[i] == "" || profile[i] == " ")
 			profile[i] = "NONE";
-		profileInfo[i] = widen(profile[i]);
+		profileInfo.push_back(widen(profile[i]));
 	}
 
 		/*if (i < 2) {
@@ -208,6 +207,8 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"End Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Day", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass1 = CreateWindowW(L"Edit", profileInfo[3].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
@@ -217,51 +218,63 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[6].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[7].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
-		hClass2 = CreateWindowW(L"Edit", profileInfo[7].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+		hClass2 = CreateWindowW(L"Edit", profileInfo[8].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-		CreateWindowW(L"Static", profileInfo[8].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[9].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[10].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[11].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-
-		hClass3 = CreateWindowW(L"Edit", profileInfo[11].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[12].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-		CreateWindowW(L"Static", profileInfo[13].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+
+		hClass3 = CreateWindowW(L"Edit", profileInfo[13].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[14].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-		
-		hClass4 = CreateWindowW(L"Edit", profileInfo[15].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[15].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[16].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[17].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-		CreateWindowW(L"Static", profileInfo[18].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
-
-		hClass5 = CreateWindowW(L"Edit", profileInfo[19].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		
+		hClass4 = CreateWindowW(L"Edit", profileInfo[18].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[19].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[20].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[21].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[22].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
-		hClass6 = CreateWindowW(L"Edit", profileInfo[23].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		hClass5 = CreateWindowW(L"Edit", profileInfo[23].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[24].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[25].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[26].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[27].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+
+		hClass6 = CreateWindowW(L"Edit", profileInfo[28].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[29].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[30].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[31].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+		CreateWindowW(L"Static", profileInfo[32].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 	}
 
 	return hProfile;
@@ -620,7 +633,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			+ (std::string)user + "')");
 
 
-		CreateWindowW(L"Static", Staff Lot 12", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
+		CreateWindowW(L"Static", L"Staff Lot 12", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
 			20, 20, buttonWidth, buttonHeight * 2, hLot12, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, hLot12, (HMENU)STFLOTMENU, NULL, NULL);
@@ -813,70 +826,81 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		char spotNumber[256];
 		unsigned int spotSelection;
 		bool hasClass = false;
+		bool classToday = false;
 		std::vector<std::string> availSpots;
 
-		GetWindowText(hSpotNumber, (LPSTR)spotNumber, 128);
+		GetWindowText(hSpotNumber, (LPSTR)spotNumber, 128);								//get spot number selected
+
 		for(unsigned int j = 0; j < ((std::string) spotNumber).length(); j++)
-			if (((std::string) spotNumber)[j] >= 'A' && ((std::string) spotNumber)[j] <= 'Z'
+			if (((std::string) spotNumber)[j] >= 'A' && ((std::string) spotNumber)[j] <= 'Z'					//check if has letters
 				|| ((std::string) spotNumber)[j] >= 'a' && ((std::string) spotNumber)[j] <= 'z') {
 				MessageBoxW(hReserve, L"Enter a spot number", L"Reservation", MB_OK);
 				return;
 			}
 
-		if (((std::string) spotNumber) > "0" && ((std::string) spotNumber) < std::to_string(999999)) {
-			spotSelection = std::stoi((std::string) spotNumber);
+		if (((std::string) spotNumber) > "0" && ((std::string) spotNumber) < std::to_string(999999)) {			//make sure it's just numbers
+			spotSelection = std::stoi((std::string) spotNumber);										//if so covert to int type
 		}else {
-			MessageBoxW(hReserve, L"Enter a spot number", L"Reservation", MB_OK);
+			MessageBoxW(hReserve, L"Enter a spot number", L"Reservation", MB_OK);							
 			return;
 		}
 
-		wchar_t spot[256];								//generartes spot number
+		wchar_t spot[256];								//generartes spot number for display
 		wsprintfW(spot, L"%d", spotSelection);
 
-		databaseConnect.checkSpots(lotName, availSpots);
+		databaseConnect.checkSpots(lotName, availSpots);									//gets availibility for all spots in lot
 
-		if (spotSelection > availSpots.size() || spotSelection < 1) {
+		if (spotSelection > availSpots.size() || spotSelection < 1) {						//spot entered that is negative of greater than number of spots in lot
 			MessageBoxW(hReserve, L"Spot does not exist", L"Reservation", MB_OK);
 			return;
 		}
 
-		if (availSpots[spotSelection - 1] == "N")
+		if (availSpots[spotSelection - 1] == "N")										//if unavailable spot is selected
 			MessageBoxW(hReserve, L"Spot Already Taken", L"Reservation", MB_OK);
 		else {
-			if (userGroup == "A") {
+			if (userGroup == "A")													//if admin reserves spot overide
 				databaseConnect.insertStatement("exec AdminReserveUpdate");
-			}
-			else if (userGroup == "U") {
-				if (lotName == "Lot01") {
-					std::vector<std::string> classTimes;
-					std::string timeRN = getCurrentTime();
-					std::string plus = getCurrentTimePlus();
+			else if (userGroup == "U") {											//if student
+				if (lotName == "Lot01") {												//and is priority lot
+					std::vector<std::string> classTimes;									
+					std::string timeRN = getCurrentTime();								//get current time in EST
+					std::string plus = getCurrentTimePlus(15);							//and current time plus 15
+					std::string weekday = getWeekDay();								//get today's date
 
-					databaseConnect.getStartOfClasses((std::string)user, classTimes);
+					databaseConnect.getStartOfClasses((std::string)user, classTimes);		//find start time of each class of students schedule
 
-					for (unsigned int i = 0; i < classTimes.size(); i++) 
+					for (unsigned int k = 6; k < classTimes.size(); k++)					//check if has class today
+						for (unsigned int g = 0; g < classTimes[k].size(); g += 4)
+							if (classTimes[k][g] == weekday[0] && classTimes[k][g + 1] == weekday[1]
+								&& classTimes[k][g + 2] == weekday[2])
+								classToday = true;
+
+					if (classToday != true) {													//if not deny them
+						MessageBoxW(hReserve, L"You do not have a class today", L"Cannot make reservation", MB_OK);
+						return;
+					}
+					for (unsigned int i = 0; i < classTimes.size()/2; i++)					//if any class start time is within 15 min interval
 						if (classTimes[i] < plus && classTimes[i] > timeRN) 
-							hasClass = true;
+							hasClass = true;												//they may reserve a spot
 
-					if (hasClass != true) {
-						MessageBoxW(hReserve, L"You can not reserve a spot if you do not have a class with in the 15 min", L"Reservation", MB_OK);
-
+					if (hasClass != true) {													//if not deny them
+						MessageBoxW(hReserve, L"You do not have a class with in the 15 min", L"Cannot make reservation", MB_OK);
 						return;
 					}
 				}
 			}
+			//update lot to n available with username and ram id
 			std::string update = "UPDATE " + lotName + " SET Available = 'N', UserName = '" + (std::string) user
 				+ "', RamID = (Select ramID from userlogin where username = '"
 				+ (std::string) user + "') WHERE SpotNumber = " + (std::string) spotNumber;
 
 			databaseConnect.reserveSpot((std::string) update);
-			MessageBoxW(hReserve, spot, L"You Reserved Spot Number", MB_OK);
+			MessageBoxW(hReserve, spot, L"You Reserved Spot Number", MB_OK);						//tell user spot is reserved
 
-			if (userGroup == "U")
-				hReserve = studentParkingLotMenu(hReserve);
+			if (userGroup == "U")											//return to parking lot menu for...
+				hReserve = studentParkingLotMenu(hReserve);						//student
 			else
-				hReserve = staffParkingLotMenu(hReserve);
-
+				hReserve = staffParkingLotMenu(hReserve);						//staff
 		}
 	}
 	/*
@@ -903,7 +927,6 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			MessageBoxW(hRelease, L"Enter a spot number", L"Reservation", MB_OK);
 			return;
 		}
-
 
 		if (spotSelection == theirSpot) {
 			wchar_t spot[256];								//generartes spot number
@@ -1024,14 +1047,13 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			thisLot.push_back(widen(allLots[c]));
 
 			for (unsigned int k = 0; k < name.size(); k++) {
-				reserveID++;
 				wchar_t isReserved[256], isSpot[256];
 
 				thisName.push_back(widen(name[k]));
 				thisPlate.push_back(widen(plate[k]));
 
 				wsprintfW(isSpot, L"%d", spot[k]);
-				wsprintfW(isReserved, L"%d", reserveID - 1);
+				wsprintfW(isReserved, L"%d", reserveID);
 
 				CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 					pushOver, reserveID * (buttonHeight+2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
@@ -1043,6 +1065,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 					(buttonWidth + horizonatalMargin) * 3 + pushOver, reserveID * (buttonHeight + 2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 				CreateWindowW(L"Static", thisPlate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 					(buttonWidth + horizonatalMargin) * 4 + pushOver, reserveID * (buttonHeight+2), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+				reserveID++;
 			}
 		}
 		return reserveView;
@@ -1248,23 +1271,51 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 		return str;
 	}
-	/*
-	 ****	getCurrentTimePlus  function	****
-	************************************/
-	std::string ParkingLot::getCurrentTimePlus() {
+	std::string ParkingLot::getCurrentTimePlus(int addedTime) {
 		time_t curr_time;
-
 		struct tm* timeinfo;
 		timeinfo = new tm;
 		char buffer[80];
+		int minuteLimit = 60 - addedTime;
 
 		time(&curr_time);
 		localtime_s(timeinfo, &curr_time);
 
-		timeinfo->tm_min += 15;
+		if (timeinfo->tm_min >= minuteLimit) {
+			if (timeinfo->tm_hour >= 23) {
+				timeinfo->tm_hour -= 23;
+				timeinfo -= minuteLimit;
+			}
+			else {
+				timeinfo->tm_hour++;
+				timeinfo->tm_min -= minuteLimit;
+			}
+		}
+		else
+			timeinfo->tm_min += addedTime;
 
 		strftime(buffer, sizeof(buffer), "%H:%M:%S", timeinfo);
 		std::string str(buffer);
 
 		return str;
+	}
+
+	/*
+	****	getWeekDay function	*****
+	**********************************/
+	std::string ParkingLot::getWeekDay() {
+		time_t t;
+		struct tm* timePtr;
+		timePtr = new tm;
+		char buffer[80];
+
+		time(&t);
+		localtime_s(timePtr, &t);
+		strftime(buffer, sizeof(buffer), "%a", timePtr);
+
+		std::string day(buffer);
+
+		std::cout << "Day\t" + day + '\n';
+
+		return day;
 	}
