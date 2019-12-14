@@ -23,8 +23,8 @@ public:
 		std::vector<std::string>&, std::string);
 	void getReports(std::vector<std::string>&, std::vector<std::string>&, 
 		std::vector<int>&, std::vector<std::string>&);
-	void getRequests(std::vector<std::string>&, std::vector<std::string>&,
-		std::vector<std::string>&, std::vector<std::string>&, std::vector<int>&);
+	void getRequests(std::vector<int>&, std::vector<std::string>&, std::vector<std::string>&,
+		std::vector<std::string>&, std::vector<std::string>&, std::vector<int>&, std::string);
 	void getProfile(std::string, std::vector<std::string>&, std::string);
 	void getStartOfClasses(std::string, std::vector<std::string>&);
 };

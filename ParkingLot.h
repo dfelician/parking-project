@@ -13,7 +13,7 @@ private:
 	HWND hRam_ID = NULL, hPassword = NULL, hPermit_ID = NULL, hUserName = NULL, hFirstName = NULL,
 		hLastName = NULL, hSpotNumber = NULL, hBackPic = NULL, hClass1 = NULL, hClass2 = NULL,			//used to store user inputs
 		hClass3 = NULL, hClass4 = NULL, hClass5 = NULL, hClass6 = NULL, hMake = NULL, hModel = NULL, hPlate = NULL,
-		hLot = NULL, hDate = NULL, hSpots = NULL, hEvent = NULL;
+		hLot = NULL, hDate = NULL, hSpots = NULL, hEvent = NULL, hApproved = NULL;
 
 	HWND userScheduleAndCarInfo(HWND);
 	std::wstring widen(const std::string&);
@@ -57,6 +57,8 @@ public:
 #define ADMINMENU 25
 #define MULTIPLE 26
 #define MORE 27
+#define APROVE 28
+#define APPROVEREQUEST 29
 
 	HWND adminMenu(HWND);
 	void sendReport(HWND);
@@ -74,6 +76,7 @@ public:
 	HWND viewProfile(HWND);
 	HWND logIn(HWND);
 	void signIn(HWND);
+	void approveRequest(HWND);
 	HWND lot18(HWND);
 	HWND lot15(HWND);
 	HWND lot12(HWND);
@@ -86,6 +89,7 @@ public:
 	void addMenus(HWND);
 	HWND displayReservations(HWND);
 	HWND displayReports(HWND);
+	HWND displayApprovedRequests(HWND);
 	HWND displayRequests(HWND);
 	HWND spotTaken(HWND);
 };

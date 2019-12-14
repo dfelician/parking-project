@@ -528,15 +528,15 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			20, bottomButton, buttonWidth, buttonHeight, hMoreSpots, (HMENU)STFLOTMENU, NULL, NULL);
 
 		hLot = CreateWindowW(L"Edit", L"Lot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//enter first name from screen
-			centerX, centerY - ( 2) * 4, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 4, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		hDate = CreateWindowW(L"Edit", L"Date of Event(YYYY-MM-DD)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//last name
-			centerX, centerY - ( 2) * 3, buttonWidth + buttonHeight, buttonHeight * 2, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 3, buttonWidth + buttonHeight, buttonHeight * 2, hMoreSpots, NULL, NULL, NULL);
 		hSpots = CreateWindowW(L"Edit", L"Number of Spots", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//ramID
-			centerX, centerY - ( 2) * 1, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
+			centerX, centerY - (buttonHeight + 2) * 1, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		hEvent = CreateWindowW(L"Edit", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//username
 			centerX, centerY, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, NULL, NULL, NULL);
 		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD,
-			centerX, centerY + ( 2) * 2, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, (HMENU)MORE, NULL, NULL);
+			centerX, centerY + (buttonHeight + 2) * 2, buttonWidth + buttonHeight, buttonHeight, hMoreSpots, (HMENU)MORE, NULL, NULL);
 
 		return hMoreSpots;
 	}
@@ -983,7 +983,6 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			hAdminOpt = adminMenu(hAdminOpt);						//open parking Lot menu
 		else											//login not successful
 			MessageBoxW(hAdminOpt, L"Information Incorrect or Failed Network Connection", L"Account Not Found", MB_OK);			//display error message
-
 	}
 	/*	
 	****	adminMenu function */
@@ -1001,6 +1000,8 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			centerX, centerY, buttonWidth *1.5, buttonHeight, hAdminMenu, (HMENU)VIEW, NULL, NULL);
 		CreateWindowW(L"Button", L"Pending Requests", WS_VISIBLE | WS_CHILD,
 			centerX, centerY + (buttonHeight + 2) * 1, buttonWidth*1.5, buttonHeight, hAdminMenu, (HMENU)REQUEST, NULL, NULL);
+		CreateWindowW(L"Button", L"Approved Requests", WS_VISIBLE | WS_CHILD,
+			centerX, centerY + (buttonHeight + 2) * 2, buttonWidth * 1.5, buttonHeight, hAdminMenu, (HMENU)APROVE, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			1200, 20, buttonWidth, buttonHeight, hAdminMenu, (HMENU)ADMIN, NULL, NULL);
 
@@ -1079,15 +1080,17 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
 		EnableScrollBar(reserveView, SB_BOTH, ESB_ENABLE_BOTH);
-		std::vector<int> spots;
+		std::vector<int> spots, reservedID;
 		std::vector<std::string> name, lot, date, event;
 
 		CreateWindowW(L"Static", L"Pending Requests", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			20, 20, buttonWidth, buttonHeight, reserveView, HMENU(), NULL, NULL);
+			20, 20, buttonWidth, buttonHeight*2, reserveView, HMENU(), NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			windowWidth -(windowWidth/6), 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
 		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			20, bottomButton, buttonWidth, buttonHeight, reserveView, (HMENU)ADMINMENU, NULL, NULL);
+		CreateWindowW(L"Button", L"Enter", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			centerX, bottomButton, buttonWidth, buttonHeight, reserveView, (HMENU)APPROVEREQUEST, NULL, NULL);
 
 		CreateWindowW(L"Static", L"Request ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			pushOver, (buttonHeight +2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
@@ -1101,8 +1104,10 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 			(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Event Date", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		hApproved = CreateWindowW(L"Edit", L"Request ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			centerX, bottomButton - (buttonHeight + 2) * 2, buttonWidth * 2, buttonHeight, reserveView, NULL, NULL, NULL );
 
-		databaseConnect.getRequests(name, lot, event, date, spots);
+		databaseConnect.getRequests(reservedID, name, lot, event, date, spots, "N");
 		std::vector<std::wstring> thisName, thisEvent, thisLot, thisDate;
 
 			for (unsigned int k = 0; k < name.size(); k++) {
@@ -1113,7 +1118,7 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 				thisDate.push_back(widen(date[k]));
 
 				wsprintfW(aSpot, L"%d", spots[k]);
-				wsprintfW(isReserved, L"%d", k + 1);
+				wsprintfW(isReserved, L"%d", reservedID[k]);
 
 				CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 					pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
@@ -1128,6 +1133,66 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 				CreateWindowW(L"Static", thisDate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 					(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
 			}
+		return reserveView;
+	}
+	/*
+	 ****	displayRequests function	****
+	 *******************************************/
+	HWND ParkingLot::displayApprovedRequests(HWND hPrev) {
+		int verticalMargin = 5, horizonatalMargin = 10, pushOver = buttonWidth + buttonHeight;
+		DestroyWindow(hPrev);
+		HWND reserveView = CreateWindowW(L"myWindowClass", L"Parking Registration", WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+			0, 0, windowWidth, windowHeight, NULL, NULL, NULL, NULL);
+		EnableScrollBar(reserveView, SB_BOTH, ESB_ENABLE_BOTH);
+		std::vector<int> spots, reservedID;
+		std::vector<std::string> name, lot, date, event;
+
+		CreateWindowW(L"Static", L"Approved Requests", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			20, 20, buttonWidth, buttonHeight*2, reserveView, HMENU(), NULL, NULL);
+		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			windowWidth - (windowWidth / 6), 20, buttonWidth, buttonHeight, reserveView, (HMENU)ADMIN, NULL, NULL);
+		CreateWindowW(L"Button", L"Back", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			20, bottomButton, buttonWidth, buttonHeight, reserveView, (HMENU)ADMINMENU, NULL, NULL);
+
+		CreateWindowW(L"Static", L"Request ID", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"User Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Lot Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Number Spots", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Event", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		CreateWindowW(L"Static", L"Event Date", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * verticalMargin, buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+
+		databaseConnect.getRequests(reservedID, name, lot, event, date, spots, "Y");
+		std::vector<std::wstring> thisName, thisEvent, thisLot, thisDate;
+
+		for (unsigned int k = 0; k < name.size(); k++) {
+			wchar_t isReserved[256], aSpot[256];
+			thisName.push_back(widen(name[k]));
+			thisEvent.push_back(widen(event[k]));
+			thisLot.push_back(widen(lot[k]));
+			thisDate.push_back(widen(date[k]));
+
+			wsprintfW(aSpot, L"%d", spots[k]);
+			wsprintfW(isReserved, L"%d", reservedID[k]);
+
+			CreateWindowW(L"Static", isReserved, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			CreateWindowW(L"Static", thisName[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				buttonWidth + horizonatalMargin + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			CreateWindowW(L"Static", thisLot[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				(buttonWidth + horizonatalMargin) * 2 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			CreateWindowW(L"Static", aSpot, WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				(buttonWidth + horizonatalMargin) * 3 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			CreateWindowW(L"Static", thisEvent[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				(buttonWidth + horizonatalMargin) * 4 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+			CreateWindowW(L"Static", thisDate[k].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				(buttonWidth + horizonatalMargin) * 5 + pushOver, (buttonHeight + 2) * (k + 1 + verticalMargin), buttonWidth, buttonHeight, reserveView, NULL, NULL, NULL);
+		}
 		return reserveView;
 	}
 	/*
@@ -1186,6 +1251,44 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		return reserveView;
 	}
 	/*
+	 ****	approveRequest function
+	**********************************/
+	void ParkingLot::approveRequest(HWND wRequest) {
+		char appvalRqst[256];
+		int requestAsNum;
+
+		GetWindowText(hApproved, (LPSTR)appvalRqst, 128);
+
+		if(((std::string) appvalRqst) == ""){
+			MessageBoxW(wRequest, L"Nothing Entered", L"Request Approval", MB_OK);
+			return;
+		}
+		for (unsigned int j = 0; j < ((std::string) appvalRqst).length(); j++)
+			if (((std::string) appvalRqst)[j] >= 'A' && ((std::string) appvalRqst)[j] <= 'Z'					//check if has letters
+				|| ((std::string) appvalRqst)[j] >= 'a' && ((std::string) appvalRqst)[j] <= 'z') {
+				MessageBoxW(wRequest, L"Enter a request id number", L"Request Approval", MB_OK);
+				return;
+			}
+
+		if (((std::string) appvalRqst) > "0" && ((std::string) appvalRqst) < std::to_string(999999)) {
+			requestAsNum = std::stoi((std::string) appvalRqst);			//make sure it's just numbers
+		}
+		else {
+			MessageBoxW(wRequest, L"Enter a request id number", L"Request Approval", MB_OK);
+			return;
+		}
+
+		std::string update = "update pendingrequests set approved = 'Y' where requestNum = " 
+			+ ((std::string) appvalRqst);
+
+		std::cout << update << std::endl;
+		wchar_t approved[256];								//generartes spot number for display
+		wsprintfW(approved, L"%d", requestAsNum);
+
+		databaseConnect.insertStatement(update);
+		MessageBoxW(wRequest, approved, L"You Approved Request Number", MB_OK);
+	}
+	/*
 	****	spotTaken function	****
 	*********************************/
 	HWND ParkingLot::spotTaken(HWND hPrev) {
@@ -1196,19 +1299,23 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 
 		CreateWindowW(L"Static", L"Stolen Spot Report", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,		//heading
 			headingCenterX, 20, headingWidth, headingHeight, hTaken, NULL, NULL, NULL);
-		CreateWindowW(L"Button", L"Back to Parking Lot Menu", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			20, bottomButton, buttonWidth + (buttonHeight * 2), buttonHeight, hTaken, (HMENU)STDLOTMENU, NULL, NULL);
 		CreateWindowW(L"Button", L"Log Out", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
 			windowWidth - (windowWidth/6), 20, buttonWidth, buttonHeight, hTaken, (HMENU)LOG_IN, NULL, NULL);
+		if(userGroup == "U")
+			CreateWindowW(L"Button", L"Back to Parking Lot Menu", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+			20, bottomButton, buttonWidth *2, buttonHeight, hTaken, (HMENU)STDLOTMENU, NULL, NULL);
+		else
+			CreateWindowW(L"Button", L"Back to Parking Lot Menu", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
+				20, bottomButton, buttonWidth*2, buttonHeight, hTaken, (HMENU)STFLOTMENU, NULL, NULL);
 
 		int stolenSpot = databaseConnect.getSpotNumber("select spotnumber from "
 			+ lotName + " where username = '" + (std::string) user + "'");
 
 		hPlate = CreateWindowW(L"Edit", L"Enter license plate number of the car that took you spot", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER | ES_MULTILINE | ES_AUTOVSCROLL,
-			centerX, centerY, buttonWidth, buttonHeight * 3, hTaken, NULL, NULL, NULL);
+			centerX, centerY, buttonWidth * 2, buttonHeight * 3, hTaken, NULL, NULL, NULL);
 
 		CreateWindowW(L"Button", L"Send Report and Get New Spot", WS_VISIBLE | WS_CHILD | SS_CENTER,
-			centerX - buttonHeight * 2, centerY + (buttonHeight +2) * 3, buttonWidth + buttonHeight * 3, buttonHeight, hTaken, HMENU(SEND), NULL, NULL);
+			centerX - buttonHeight * 2, centerY + (buttonHeight +2) * 3, buttonWidth*2, buttonHeight*2, hTaken, HMENU(SEND), NULL, NULL);
 		return hTaken;
 	}
 	/*
@@ -1314,8 +1421,5 @@ HWND ParkingLot::userScheduleAndCarInfo(HWND hPrev) {
 		strftime(buffer, sizeof(buffer), "%a", timePtr);
 
 		std::string day(buffer);
-
-		std::cout << "Day\t" + day + '\n';
-
 		return day;
 	}

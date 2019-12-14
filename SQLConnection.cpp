@@ -790,15 +790,14 @@ void ConnectToDB::getReports(std::vector<std::string>& nameVec, std::vector<std:
 	SQLFreeHandle(SQL_HANDLE_DBC, SQLConnectionHandle);
 	SQLFreeHandle(SQL_HANDLE_ENV, SQLEnvHandle);
 }
-void ConnectToDB::getRequests(std::vector<std::string>& nameVec, std::vector<std::string>& currentLot,
-	std::vector<std::string>& events, std::vector<std::string>& date, std::vector<int>& allSpots) {
+void ConnectToDB::getRequests(std::vector<int>& reserveVec, std::vector<std::string>& nameVec, std::vector<std::string>& currentLot,
+	std::vector<std::string>& events, std::vector<std::string>& date, std::vector<int>& allSpots, std::string approval) {
 	SQLHANDLE SQLEnvHandle = NULL;
 	SQLHANDLE SQLConnectionHandle = NULL;
 	SQLHANDLE SQLStatementHandle = NULL;
 	SQLRETURN retCode = 0;
 
-	std::string SQLQuery = "select username, lotname, convert(varchar, dateofevent,7), numspots, eventname from pendingrequests";
-
+	std::string SQLQuery = "select requestNum, username, lotname, convert(varchar, dateofevent,7), numspots, eventname from pendingrequests where approved = '" + approval + "'";
 
 	do {
 		if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &SQLEnvHandle))
@@ -856,11 +855,11 @@ void ConnectToDB::getRequests(std::vector<std::string>& nameVec, std::vector<std
 		}
 		else {
 			int spots;
+			int rqstNumber;
 			char name[256];
 			char evnt[256];
 			char lot[256];
 			char dates[256];
-
 
 			name[0] = '\0';
 			dates[0] = '\0';
@@ -869,12 +868,14 @@ void ConnectToDB::getRequests(std::vector<std::string>& nameVec, std::vector<std
 
 			while (SQLFetch(SQLStatementHandle) == SQL_SUCCESS) {
 				// Fetches the next rowset of data from the result
-				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &name, sizeof(name), NULL);
-				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &lot, sizeof(lot), NULL);
-				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &dates, sizeof(dates), NULL);
-				SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &spots, sizeof(spots), NULL);
-				SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &evnt, sizeof(evnt), NULL);
+				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &rqstNumber, sizeof(rqstNumber), NULL);
+				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &name, sizeof(name), NULL);
+				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &lot, sizeof(lot), NULL);
+				SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &dates, sizeof(dates), NULL);
+				SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &spots, sizeof(spots), NULL);
+				SQLGetData(SQLStatementHandle, 6, SQL_C_DEFAULT, &evnt, sizeof(evnt), NULL);
 
+				reserveVec.push_back(rqstNumber);
 				nameVec.push_back((std::string)name);
 				events.push_back((std::string)evnt);
 				date.push_back((std::string)dates);

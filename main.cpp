@@ -75,8 +75,14 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 			case ADMINMENU:
 				hWnd = farmingdale.adminMenu(hWnd);
 				break;
+			case APROVE:
+				hWnd = farmingdale.displayApprovedRequests(hWnd);
+				break;
 			case ADMINOPTS:
 				farmingdale.adminOptions(hWnd);
+				break;
+			case APPROVEREQUEST:
+				farmingdale.approveRequest(hWnd);
 				break;
 			case MORE:
 				farmingdale.sendRequest(hWnd);
