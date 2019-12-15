@@ -28,5 +28,7 @@ public:
 	void getProfile(std::string, std::vector<std::string>&, std::string);
 	void getStartOfClasses(std::string, std::vector<std::string>&);
 	void morningProc();
-	void lotProc();
+	void lot01Proc();
+	void lot02Proc();
+	void lot03Proc();
 };

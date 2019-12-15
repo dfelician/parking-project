@@ -252,7 +252,9 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 }
 int main(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow) {
 	ConnectToDB morning;
-	morning.lotProc();
+	morning.lot01Proc();
+	morning.lot02Proc();
+	morning.lot03Proc();
 	morning.morningProc();
 
 	WNDCLASSW wc = { 0 };
