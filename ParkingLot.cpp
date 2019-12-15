@@ -56,6 +56,8 @@ void ParkingLot::addInfo(HWND wndw) {
 			(std::string)class4, (std::string)class5, (std::string)class6 };
 
 		for (int i = 0; i < 6; i++) {		//check each class
+			std::cout << classes[i] << std::endl;
+
 			if (i == 0)
 				if (classes[i] == "") {					//class one empty
 					MessageBoxW(wndw, L"You must have at least one class in your schedule (1)Class 1", L"Class Schedule", MB_OK);
@@ -88,10 +90,15 @@ void ParkingLot::addInfo(HWND wndw) {
 			}
 		}										///		end class check
 
-		for (unsigned int i = 0; i < classes->size(); i++)						//get rid of duplicates
-			for (unsigned int j = i; j < classes->size(); j++)
-				if (classes[j] == classes[i])
+		for (unsigned int i = 0; i < classes->size() - 1; i++) {
+			std::cout << classes[i] << std::endl;						//get rid of duplicates
+
+			for (unsigned int j = 0; j < classes->size() - 1; j++) 
+
+				if (classes[j] == classes[i] && j != i)
 					classes[j] = "NULL";
+			std::cout << classes[i] << std::endl;						//get rid of duplicates
+		}
 
 		//insert to student's schedule
 		databaseConnect.insertStatement("Insert into schedule_test values((select ramid from userlogin where username like '"
@@ -165,6 +172,9 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 	std::vector<std::string> profile;
 	std::vector<std::wstring> profileInfo;
 
+	for (unsigned int i = 0; i < 33; i++) {
+		profile.push_back("");
+	}
 	databaseConnect.getProfile((std::string)user, profile, userGroup);
 
 	for (unsigned int i = 0; i < profile.size(); i++) {
@@ -185,96 +195,96 @@ HWND ParkingLot::viewProfile(HWND hPrev) {
 	}*/
 
 	CreateWindowW(L"Static", L"VEHICLE INFO", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//vehicle info
-		headingCenterX, buttonHeight + 2, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
+		headingCenterX, buttonHeight + 2, headingWidth, headingHeight/2, hProfile, NULL, NULL, NULL);
 	hMake = CreateWindowW(L"Edit", profileInfo[0].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - (buttonHeight + 2) *5, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) *7, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 	hModel = CreateWindowW(L"Edit", profileInfo[1].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - (buttonHeight + 2)*4, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2)*6, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 	hPlate = CreateWindowW(L"Edit", profileInfo[2].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-		centerX, centerY - (buttonHeight + 2) * 3, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
+		centerX, centerY - (buttonHeight + 2) * 5, buttonWidth, buttonHeight, hProfile, NULL, NULL, NULL);
 
 	if (userGroup == "U") {
 		CreateWindowW(L"Static", L"CLASS SCHEDULE", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,			//Schedule
-			headingCenterX, bottomButton - (buttonHeight + 2)*12+10, headingWidth, headingHeight, hProfile, NULL, NULL, NULL);
+			headingCenterX, bottomButton - (buttonHeight + 2)*14+10, headingWidth, headingHeight/2, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Leave blank where no class\n(Enter the CRN)", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			centerX, bottomButton - (buttonHeight + 2)*10+10, buttonWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
+			headingCenterX, bottomButton - (buttonHeight + 2)*13+10, headingWidth, buttonHeight + 35, hProfile, NULL, NULL, NULL);
 
 		CreateWindowW(L"Static", L"CRN", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2)*8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2)*11, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Class Name", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 11, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Start Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 11, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"End Time", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 11, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", L"Day", WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 11, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass1 = CreateWindowW(L"Edit", profileInfo[3].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 10, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[4].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 10, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[5].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 10, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[6].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 10, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[7].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 10, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass2 = CreateWindowW(L"Edit", profileInfo[8].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 9, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[9].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 9, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[10].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 9, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[11].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 9, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[12].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 9, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass3 = CreateWindowW(L"Edit", profileInfo[13].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[14].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[15].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[16].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[17].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 8, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		
 		hClass4 = CreateWindowW(L"Edit", profileInfo[18].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[19].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[20].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[21].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[22].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 4, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 7, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass5 = CreateWindowW(L"Edit", profileInfo[23].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[24].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[25].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[26].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[27].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 3, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 6, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 
 		hClass6 = CreateWindowW(L"Edit", profileInfo[28].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[29].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + secondColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[30].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + thirdColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[31].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fourthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 		CreateWindowW(L"Static", profileInfo[32].c_str(), WS_VISIBLE | WS_CHILD | WS_BORDER | SS_CENTER,
-			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 2, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
+			xPos + fifthColumnMargin, bottomButton - (buttonHeight + 2) * 5, buttonWidth + 10, buttonHeight, hProfile, NULL, NULL, NULL);
 	}
 
 	return hProfile;

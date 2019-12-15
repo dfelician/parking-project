@@ -1003,6 +1003,7 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 				SQLGetData(SQLStatementHandle, 1, SQL_C_DEFAULT, &carMk, sizeof(carMk), NULL);
 				SQLGetData(SQLStatementHandle, 2, SQL_C_DEFAULT, &crMdel, sizeof(crMdel), NULL);
 				SQLGetData(SQLStatementHandle, 3, SQL_C_DEFAULT, &pltNmbr, sizeof(pltNmbr), NULL);
+
 				SQLGetData(SQLStatementHandle, 4, SQL_C_DEFAULT, &clss1, sizeof(clss1), NULL);
 				SQLGetData(SQLStatementHandle, 5, SQL_C_DEFAULT, &clss2, sizeof(clss2), NULL);
 				SQLGetData(SQLStatementHandle, 6, SQL_C_DEFAULT, &clss3, sizeof(clss3), NULL);
@@ -1038,43 +1039,43 @@ void ConnectToDB::getProfile(std::string usr, std::vector<std::string> &prflVctr
 				SQLGetData(SQLStatementHandle, 32, SQL_C_DEFAULT, &class5Day, sizeof(class5Day), NULL);
 				SQLGetData(SQLStatementHandle, 33, SQL_C_DEFAULT, &class6Day, sizeof(class6Day), NULL);
 
-				prflVctr.push_back((std::string)carMk);
-				prflVctr.push_back((std::string)crMdel);
-				prflVctr.push_back((std::string)pltNmbr);
-				prflVctr.push_back((std::string)clss1);
-				prflVctr.push_back((std::string)clss2);
-				prflVctr.push_back((std::string)clss3);
-				prflVctr.push_back((std::string)clss4);
-				prflVctr.push_back((std::string)clss5);
-				prflVctr.push_back((std::string)clss6);
+				prflVctr[0] = ((std::string)carMk);
+				prflVctr[1] = ((std::string)crMdel);
+				prflVctr[2] = ((std::string)pltNmbr);
+				prflVctr[3] = ((std::string)clss1);
+				prflVctr[4] = ((std::string)clss2);
+				prflVctr[5] = ((std::string)clss3);
+				prflVctr[6] = ((std::string)clss4);
+				prflVctr[7] = ((std::string)clss5);
+				prflVctr[8] = ((std::string)clss6);
 
-				prflVctr.push_back((std::string)class1Name);
-				prflVctr.push_back((std::string)class2Name);
-				prflVctr.push_back((std::string)class3Name);
-				prflVctr.push_back((std::string)class4Name);
-				prflVctr.push_back((std::string)class5Name);
-				prflVctr.push_back((std::string)class6Name);
+				prflVctr[9] = ((std::string)class1Name);
+				prflVctr[10] = ((std::string)class2Name);
+				prflVctr[11] = ((std::string)class3Name);
+				prflVctr[12] = ((std::string)class4Name);
+				prflVctr[13] = ((std::string)class5Name);
+				prflVctr[14] = ((std::string)class6Name);
 
-				prflVctr.push_back((std::string)class1Start);
-				prflVctr.push_back((std::string)class2Start);
-				prflVctr.push_back((std::string)class3Start);
-				prflVctr.push_back((std::string)class4Start);
-				prflVctr.push_back((std::string)class5Start);
-				prflVctr.push_back((std::string)class6Start);
+				prflVctr[15] = ((std::string)class1Start);
+				prflVctr[16] = ((std::string)class2Start);
+				prflVctr[17] = ((std::string)class3Start);
+				prflVctr[18] = ((std::string)class4Start);
+				prflVctr[19] = ((std::string)class5Start);
+				prflVctr[20] = ((std::string)class6Start);
 
-				prflVctr.push_back((std::string)class1End);
-				prflVctr.push_back((std::string)class2End);
-				prflVctr.push_back((std::string)class3End);
-				prflVctr.push_back((std::string)class4End);
-				prflVctr.push_back((std::string)class5End);
-				prflVctr.push_back((std::string)class6End);
+				prflVctr[21] = ((std::string)class1End);
+				prflVctr[22] = ((std::string)class2End);
+				prflVctr[23] = ((std::string)class3End);
+				prflVctr[24] = ((std::string)class4End);
+				prflVctr[25] = ((std::string)class5End);
+				prflVctr[26] = ((std::string)class6End);
 
-				prflVctr.push_back((std::string)class1Day);
-				prflVctr.push_back((std::string)class2Day);
-				prflVctr.push_back((std::string)class3Day);
-				prflVctr.push_back((std::string)class4Day);
-				prflVctr.push_back((std::string)class5Day);
-				prflVctr.push_back((std::string)class6Day);
+				prflVctr[27] = ((std::string)class1Day);
+				prflVctr[28] = ((std::string)class2Day);
+				prflVctr[29] = ((std::string)class3Day);
+				prflVctr[30] = ((std::string)class4Day);
+				prflVctr[31] = ((std::string)class5Day);
+				prflVctr[32] = ((std::string)class6Day);
 			}
 		}
 	} while (FALSE);
