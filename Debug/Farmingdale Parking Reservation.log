@@ -1,8 +1,2 @@
 ﻿  ParkingLot.cpp
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(513,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(515,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(1007,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(1009,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(1011,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\ParkingLot.cpp(1013,1): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
   Farmingdale Parking Reservation.vcxproj -> C:\Users\Toyin\OneDrive\Documents\Visual Studio 2019\Code Snippets\Visual C++\My Code Snippets\Farmingdale Parking Reservation\Debug\Farmingdale Parking Reservation.exe

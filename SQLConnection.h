@@ -18,6 +18,7 @@ public:
 	void checkSpots(std::string, std::vector<std::string>&);
 	int getSpotNumber(std::string);
 	bool findCourse(std::string, std::string);
+	bool findID(std::string, int);
 	bool getStudent(std::string, std::string, std::string);
 	void getReservations(std::vector<std::string>&, std::vector<int>&,
 		std::vector<std::string>&, std::string);

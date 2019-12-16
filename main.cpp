@@ -251,6 +251,12 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp) {
 		return 0;
 }
 int main(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow) {
+	ConnectToDB morning;
+	morning.insertStatement("exec updateLot01Proc");
+	morning.insertStatement("exec updateLot02Proc");
+	morning.insertStatement("exec updateLot03Proc");
+	morning.insertStatement("exec MorningAdminProcedure");
+
 	WNDCLASSW wc = { 0 };
 
 	wc.hbrBackground = CreateSolidBrush(RGB(0, 175, 0));				//background color
