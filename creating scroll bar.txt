@@ -1,0 +1,51 @@
+	case WM_CREATE: {
+		farmingdale.addMenus(hWnd);										//displays menu items
+		EnableScrollBar(hWnd, SB_BOTH, ESB_ENABLE_BOTH);
+
+		int ScrollBarWidth = 15;
+		int ScrollBarHeight = 15;
+		RECT Rect;
+		GetClientRect(hWnd, &Rect);
+
+		hWndVScrollBar = CreateWindowEx(
+			0, "SCROLLBAR", NULL, WS_VISIBLE | WS_CHILD | SBS_VERT, Rect.right - ScrollBarWidth, 0, ScrollBarWidth,
+			Rect.bottom - ScrollBarHeight, hWnd, (HMENU)IDC_VSCROLLBAR, (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE), NULL);
+
+		if (!hWndVScrollBar)
+			MessageBox(NULL, "Vertical Scroll Bar Failed.", "Error", MB_OK | MB_ICONERROR);
+
+		hWndHScrollBar = CreateWindowEx(0, "SCROLLBAR", NULL, WS_VISIBLE | WS_CHILD | SBS_HORZ, 0, Rect.bottom - ScrollBarHeight,
+			Rect.right - ScrollBarWidth, ScrollBarHeight, hWnd, (HMENU)IDC_HSCROLLBAR, (HINSTANCE)GetWindowLong(hWnd, GWL_HINSTANCE), NULL);
+
+		if (!hWndHScrollBar)
+			MessageBox(NULL, "Horizontal Scroll Bar Failed.", "Error", MB_OK | MB_ICONERROR);
+
+		SetScrollRange(hWndVScrollBar, SB_CTL, 0, 100, TRUE);
+		SetScrollRange(hWndHScrollBar, SB_CTL, 0, 100, TRUE);
+	}
+				  break;
+	case WM_HSCROLL: {
+
+		switch ((int)LOWORD(wp)) {
+		case SB_LINEUP:
+			SetScrollPos((HWND)lp, SB_CTL, 0, TRUE);
+			break;
+		case SB_LINEDOWN:
+			SetScrollPos((HWND)lp, SB_CTL, 100, TRUE);
+			break;
+		}
+		return 0;
+	}
+				   break;
+	case WM_VSCROLL: {
+
+		switch ((int)LOWORD(wp)) {
+		case SB_LINEUP:
+			SetScrollPos((HWND)lp, SB_CTL, 0, TRUE);
+			break;
+		case SB_LINEDOWN:
+			SetScrollPos((HWND)lp, SB_CTL, 100, TRUE);
+			break;
+		}
+		return 0;
+	}
